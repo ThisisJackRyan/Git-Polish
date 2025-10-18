@@ -1,6 +1,5 @@
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
-    const username = searchParams.get('username') || 'thisisjackryan';
     const token = searchParams.get('token')
 
 
