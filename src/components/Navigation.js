@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ThemeToggle from './ThemeToggle';
+import AuthButton from './AuthButton';
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -49,9 +50,7 @@ export default function Navigation() {
           {/* Theme Toggle and Login Button */}
           <div className="hidden md:flex items-center space-x-4">
             <ThemeToggle />
-            <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
-              Login with GitHub
-            </button>
+            <AuthButton />
           </div>
 
           {/* Mobile menu button */}
@@ -98,9 +97,9 @@ export default function Navigation() {
               >
                 Pricing
               </a>
-              <button className="w-full mt-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200">
-                Login with GitHub
-              </button>
+              <div className="w-full mt-4">
+                <AuthButton />
+              </div>
             </div>
           </div>
         )}
