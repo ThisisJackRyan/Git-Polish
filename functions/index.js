@@ -10,8 +10,8 @@ import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 const GITHUB_API = 'https://api.github.com';
 
 // Secret client is created at module load; secret access happens inside the handler
-//const secretClient = new SecretManagerServiceClient();
-//const secretName = "projects/378480993455/secrets/gemini-api/versions/latest";
+const secretClient = new SecretManagerServiceClient();
+const secretName = "projects/378480993455/secrets/gemini-api/versions/latest";
 
 // --- Helper: Download ZIP from GitHub ---
 /*
@@ -98,9 +98,8 @@ export const readmeGen = onRequest(async (req, res) => {
     // that disallow it during build.
     let ai;
     try {
-        //const [accessResponse] = await secretClient.accessSecretVersion({ name: secretName });
-        //const apiKey = accessResponse.payload.data.toString("utf8");
-        const apiKey = "AIzaSyA36_03-y1rFGk0SJw_SpAm3UeRiGj3n04"; 
+        const [accessResponse] = await secretClient.accessSecretVersion({ name: secretName });
+        const apiKey = accessResponse.payload.data.toString("utf8");
         ai = new GoogleGenAI({ apiKey });
     } catch (err) {
         logger.error('failed to access secret', err);
