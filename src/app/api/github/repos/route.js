@@ -1,3 +1,7 @@
+import fetch from 'node-fetch';
+
+const GITHUB_API = 'https://api.github.com';
+
 export async function GET(request) {
     const { searchParams } = new URL(request.url)
     const token = searchParams.get('token')
@@ -88,3 +92,27 @@ export async function GET(request) {
     }
   }
   
+
+// owner is github username
+// repo is repo name
+// token is github oauth token
+export async function fetchRepoFiles(owner, repo, token) {
+  const headers = { Authorization: `token ${token}` };
+
+  const treeRes = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/git/trees/main?recursive=1`, { headers });
+  const { tree } = await treeRes.json();
+
+  const files = await Promise.all(tree
+    .filter(f => f.type === 'blob' && !f.path.includes('node_modules'))
+    .map(async f => {
+      const contentRes = await fetch(`${GITHUB_API}/repos/${owner}/${repo}/contents/${f.path}`, { headers });
+      const contentJson = await contentRes.json();
+      return {
+        path: f.path,
+        content: Buffer.from(contentJson.content, 'base64').toString('utf8'),
+      };
+    })
+  );
+
+  return files;
+}

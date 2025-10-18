@@ -3,6 +3,8 @@ import 'dotenv/config';
 import { Command } from 'commander';
 import fetch from 'node-fetch';
 import geminiExample from '../api/gemini.js';
+import getRepoData from '../api/gemini.js';
+
 
 const program = new Command();
 
@@ -37,5 +39,35 @@ program
     const res = await geminiExample();
     console.log('CLI says:', res);
   });
+
+program
+    .command('repodata <owner> <repo> <path>')
+    .description('Fetch repo data for owner, repo and path')
+    .action(async (owner, repo, token) => {
+        //try {
+            // ...existing code...
+          try {
+              const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/readmeGen', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ githubtoken: token, repo: repo, owner: owner })
+              });
+
+              if (!res.ok) {
+                // prefer to inspect body on error
+                const text = await res.text();
+                throw new Error(`Request failed (${res.status}): ${text}`);
+              }
+
+              const data = await res.json(); // parse JSON body
+              console.log('CLI says:', data.summary);
+          } catch (err) {
+              console.error('Fetch error:', err);
+          }
+          // ...existing code...
+        //} catch (err) {
+          //  console.error('Error fetching repo data:', err.message || err);
+            //process.exitCode = 1;
+        });
 
 program.parse();
