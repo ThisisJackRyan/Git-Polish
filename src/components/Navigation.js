@@ -12,6 +12,7 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
+          <a href='/'>
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
@@ -22,6 +23,7 @@ export default function Navigation() {
               </span>
             </div>
           </div>
+          </a>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
@@ -39,10 +41,10 @@ export default function Navigation() {
                 How it Works
               </a>
               <a
-                href="#pricing"
+                href="/repos/"
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 text-sm font-medium transition-colors"
               >
-                Pricing
+                Repos
               </a>
             </div>
           </div>
@@ -91,11 +93,11 @@ export default function Navigation() {
                 How it Works
               </a>
               <a
-                href="#pricing"
+                href="/repos/"
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 block px-3 py-2 text-base font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Pricing
+                Repos
               </a>
               <div className="w-full mt-4">
                 <AuthButton />
