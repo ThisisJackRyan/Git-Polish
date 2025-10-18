@@ -1,15 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
 import RepoBlock from "./components/RepoBlock";
+import { useAuth } from '../../contexts/AuthContext';
 
 export default function ReposLayout({ children }) {
+    const { user, token, loading } = useAuth();
+
     const [repos, setRepos] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [apiLoading, setApiLoading] = useState(true);
     const [error, setError] = useState(null);
 
+
     useEffect(() => {
-      setLoading(true);
-      fetch("/api/github/repos")
+    if (!loading){
+        console.log(token)
+      setApiLoading(true);
+      fetch(`/api/github/repos?token=${token}`)
         .then(res => {
           if (!res.ok) {
             throw new Error('Failed to fetch repositories');
@@ -21,10 +27,12 @@ export default function ReposLayout({ children }) {
           console.error('Error fetching repos:', err);
           setError(err.message);
         })
-        .finally(() => setLoading(false));
-    }, []);
+        .finally(() => setApiLoading(false));
+    }
+    }, [loading]);
 
-    if (loading) {
+
+    if (apiLoading) {
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">

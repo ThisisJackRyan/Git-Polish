@@ -1,11 +1,18 @@
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
-    const username = searchParams.get('username') || 'jonasbronson';
+    const username = searchParams.get('username') || 'thisisjackryan';
+    const token = searchParams.get('token')
 
+
+    if (!token){
+        return new Response(JSON.stringify({ error: 'User not authenticated' }), {
+            status: res.status,
+        });
+    }
 
     const res = await fetch(`https://api.github.com/users/${username}/repos`, {
       headers: {
-        Authorization: `token ${process.env.GITHUB_TOKEN}`,
+        Authorization: `token ${token}`,
         Accept: 'application/vnd.github+json',
       },
     });
