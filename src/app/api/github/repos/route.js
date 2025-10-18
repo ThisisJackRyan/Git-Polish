@@ -25,7 +25,7 @@ export async function GET(request) {
     const data = await res.json();
   
     // Return only repo names
-    const repoNames = data.map(repo => {return {id:repo.id, name: repo.name, description: repo.description}});
+    const repoNames = data.map(repo => {return {id:repo.id, name: repo.name, html_url: repo.html_url, description: repo.description}});
 
   
     return Response.json(repoNames);
