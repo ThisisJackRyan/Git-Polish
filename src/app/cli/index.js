@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 import 'dotenv/config';
 import { Command } from 'commander';
-import fetch from 'node-fetch';
 import geminiExample from '../api/gemini.js';
-import getRepoData from '../api/gemini.js';
-
+import { signInWithGitHubViaCLI } from '../services/firebase.js';
+import { fetchGithubRepos } from '../services/github.js';
+import { saveToken, loadToken, clearToken, getTokenFilePath } from './tokenManager.js';
+import { displayRepositoriesInteractively } from './displayUtils.js';
 
 const program = new Command();
 
@@ -14,25 +15,48 @@ program
   .version('0.1.0');
 
 program
-  .command('ping')
-  .description('Ping the running Next.js server')
+  .command('login')
   .action(async () => {
-    const res = await fetch('http://localhost:3000/api/hello');
-    const data = await res.json();
-    console.log('Response from Next.js API:', data);
+    const { user, token } = await signInWithGitHubViaCLI();
+    await saveToken(token);
+    console.log(`✅ Successfully logged in as ${user.login}`);
+    console.log(`🔑 Token saved to ${getTokenFilePath()}`);
   });
 
 program
-  .command('say <msg>')
-  .description('Echo a message')
-  .option('-e, --excited', 'Add excitement!')
-  .action((msg, options) => {
-    let text = msg;
-    if (options.excited) text += '!!! 🎉';
-    console.log('CLI says:', text);
+  .command('list')
+  .action(async () => {
+    const token = await loadToken();
+    if (!token) {
+      console.log('❌ No token found. Please run "git-polish login" first.');
+      return;
+    }
+    
+    try {
+      const reposResponse = await fetchGithubRepos(token);
+      
+      if (reposResponse.allRepos.length === 0) {
+        console.log('📋 No repositories found.'); 
+        return;
+      }
+      
+      await displayRepositoriesInteractively(reposResponse.allRepos);
+      
+    } catch (error) {
+      console.log('❌ Failed to fetch repositories. Token may be invalid.');
+      console.log('💡 Try running "git-polish login" again.');
+    }
   });
 
-  program
+program
+  .command('logout')
+  .description('Clear stored authentication token')
+  .action(async () => {
+    await clearToken();
+    console.log('✅ Successfully logged out');
+  });
+
+program
   .command('gemini')
   .description('Default Gemini responce')
   .action(async () => {

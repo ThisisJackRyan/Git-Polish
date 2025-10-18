@@ -28,3 +28,84 @@ export const signInWithGitHub = async () => {
     throw err;
   }
 };
+
+export const signInWithGitHubViaCLI = async () => {
+  const clientId = process.env.OAUTH_CLIENT_ID;
+  
+  const { device_code, user_code, verification_uri, expires_in, interval } = await requestDeviceCode(clientId);
+  
+  displayUserInstructions(verification_uri, user_code);
+  
+  const accessToken = await waitForAuthorization(clientId, device_code, expires_in, interval);
+  
+  const user = await fetchGitHubUser(accessToken);
+  
+  return { user, token: accessToken };
+};
+
+const requestDeviceCode = async (clientId) => {
+  const response = await fetch('https://github.com/login/device/code', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      client_id: clientId,
+      scope: 'repo read:user'
+    })
+  });
+
+  return await response.json();
+};
+
+const pollForAccessToken = async (clientId, deviceCode) => {
+  const response = await fetch('https://github.com/login/oauth/access_token', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      client_id: clientId,
+      device_code: deviceCode,
+      grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
+    })
+  });
+
+  return await response.json();
+};
+
+const fetchGitHubUser = async (accessToken) => {
+  const response = await fetch('https://api.github.com/user', {
+    headers: { 'Authorization': `token ${accessToken}` }
+  });
+  return await response.json();
+};
+
+const displayUserInstructions = (verificationUri, userCode) => {
+  console.log(`Go to: ${verificationUri}`);
+  console.log(`Enter code: ${userCode}`);
+};
+
+const waitForAuthorization = async (clientId, deviceCode, expiresIn, interval) => {
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < expiresIn * 1000) {
+    await new Promise(resolve => setTimeout(resolve, interval * 1000));
+    
+    const tokenData = await pollForAccessToken(clientId, deviceCode);
+    
+    if (tokenData.access_token) {
+      return tokenData.access_token;
+    }
+    
+    if (tokenData.error !== 'authorization_pending') {
+      throw new Error(tokenData.error);
+    }
+  }
+  
+  throw new Error('Authentication timeout');
+};
+
+

@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { fetchGithubRepos } from "@/app/services/github";
 
 const GITHUB_API = 'https://api.github.com';
 
@@ -15,66 +16,10 @@ export async function GET(request) {
     }
   
     try {
-      // Fetch all repositories using pagination
-      let allRepos = []
-      let currentPage = 1
-      let hasMorePages = true
-  
-      while (hasMorePages) {
-        const res = await fetch(
-          `https://api.github.com/user/repos?page=${currentPage}&per_page=100&sort=updated`,
-          {
-            headers: {
-              Authorization: `token ${token}`,
-              Accept: 'application/vnd.github+json',
-            },
-          }
-        )
-  
-        if (!res.ok) {
-          return new Response(
-            JSON.stringify({ error: 'Failed to fetch repos' }),
-            {
-              status: res.status,
-            }
-          )
-        }
-  
-        const data = await res.json()
-        allRepos = allRepos.concat(data)
-  
-        // Check if there are more pages
-        hasMorePages = data.length === 100
-        currentPage++
-      }
-  
-      // Apply pagination to the complete dataset
-      const startIndex = (page - 1) * perPage
-      const endIndex = startIndex + perPage
-      const paginatedRepos = allRepos.slice(startIndex, endIndex)
-  
-      // Return comprehensive repo data including visibility and owner info
-      const repoData = paginatedRepos.map((repo) => ({
-        id: repo.id,
-        name: repo.name,
-        html_url: repo.html_url,
-        description: repo.description,
-        visibility: repo.private ? 'private' : 'public',
-        owner: {
-          login: repo.owner.login,
-          type: repo.owner.type, // 'User' or 'Organization'
-          avatar_url: repo.owner.avatar_url,
-        },
-      }))
-  
-      // Calculate pagination metadata
-      const totalRepos = allRepos.length
-      const totalPages = Math.ceil(totalRepos / perPage)
-      const hasNextPage = page < totalPages
-      const hasPrevPage = page > 1
+      const {allRepos, totalRepos, totalPages, hasNextPage, hasPrevPage } = await fetchGithubRepos(token, page, perPage)
   
       return Response.json({
-        repos: repoData,
+        repos: allRepos,
         pagination: {
           currentPage: page,
           totalPages,

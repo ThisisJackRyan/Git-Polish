@@ -41,6 +41,7 @@ export default function Repos() {
             }
             
             const data = await response.json();
+            console.log(data)
             setRepos(data.repos);
             setPagination(data.pagination);
         } catch (err) {
