@@ -1,11 +1,13 @@
 #!/usr/bin/env node
+import 'dotenv/config';
 import { Command } from 'commander';
 import fetch from 'node-fetch';
+import geminiExample from '../api/gemini.js';
 
 const program = new Command();
 
 program
-  .name('myapp')
+  .name('git-polish')
   .description('CLI tool for My Next.js app')
   .version('0.1.0');
 
@@ -26,6 +28,14 @@ program
     let text = msg;
     if (options.excited) text += '!!! 🎉';
     console.log('CLI says:', text);
+  });
+
+  program
+  .command('gemini')
+  .description('Default Gemini responce')
+  .action(async () => {
+    const res = await geminiExample();
+    console.log('CLI says:', res);
   });
 
 program.parse();
