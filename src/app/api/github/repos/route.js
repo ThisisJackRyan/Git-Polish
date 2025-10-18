@@ -1,6 +1,5 @@
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
-    const username = searchParams.get('username') || 'thisisjackryan';
     const token = searchParams.get('token')
 
 
@@ -10,7 +9,7 @@ export async function GET(request) {
         });
     }
 
-    const res = await fetch(`https://api.github.com/users/${username}/repos`, {
+    const res = await fetch(`https://api.github.com/user/repos`, {
       headers: {
         Authorization: `token ${token}`,
         Accept: 'application/vnd.github+json',
