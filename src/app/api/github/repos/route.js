@@ -1,6 +1,6 @@
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
-    const username = searchParams.get('username') || 'thisisjackryan';
+    const username = searchParams.get('username') || 'jonasbronson';
 
 
     const res = await fetch(`https://api.github.com/users/${username}/repos`, {
