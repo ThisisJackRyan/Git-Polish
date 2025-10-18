@@ -1,38 +1,68 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import RepoBlock from "./components/RepoBlock";
 import ControlModal from "./components/ControlModal";
+import FilterBar from "./components/FilterBar";
+import Pagination from "./components/Pagination";
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function Repos() {
     const { user, token, loading } = useAuth();
 
     const [repos, setRepos] = useState([]);
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        totalPages: 1,
+        totalRepos: 0,
+        perPage: 30,
+        hasNextPage: false,
+        hasPrevPage: false
+    });
     const [apiLoading, setApiLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedRepo, setSelectedRepo] = useState(null);
+    
+    // Filter states
+    const [visibilityFilter, setVisibilityFilter] = useState('all');
+    const [ownerFilter, setOwnerFilter] = useState('all');
 
+
+    // Function to fetch repositories with pagination
+    const fetchRepos = async (page = 1, perPage = 30) => {
+        setApiLoading(true);
+        setError(null);
+        
+        try {
+            const response = await fetch(`/api/github/repos?token=${token}&page=${page}&per_page=${perPage}`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch repositories');
+            }
+            
+            const data = await response.json();
+            setRepos(data.repos);
+            setPagination(data.pagination);
+        } catch (err) {
+            console.error('Error fetching repos:', err);
+            setError(err.message);
+        } finally {
+            setApiLoading(false);
+        }
+    };
 
     useEffect(() => {
-    if (!loading){
-        console.log(token)
-      setApiLoading(true);
-      fetch(`/api/github/repos?token=${token}`)
-        .then(res => {
-          if (!res.ok) {
-            throw new Error('Failed to fetch repositories');
-          }
-          return res.json();
-        })
-        .then(setRepos)
-        .catch(err => {
-          console.error('Error fetching repos:', err);
-          setError(err.message);
-        })
-        .finally(() => setApiLoading(false));
-    }
-    }, [loading]);
+        if (!loading && token) {
+            fetchRepos(1, 30);
+        }
+    }, [loading, token]);
+
+    // Handle page changes
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= pagination.totalPages) {
+            fetchRepos(newPage, pagination.perPage);
+        }
+    };
 
     const handlePolishClick = (repo) => {
         setSelectedRepo(repo);
@@ -42,6 +72,24 @@ export default function Repos() {
     const handleModalClose = () => {
         setIsModalOpen(false);
         setSelectedRepo(null);
+    };
+
+    // Filter repositories based on current filter states
+    const filteredRepos = useMemo(() => {
+        return repos.filter(repo => {
+            const visibilityMatch = visibilityFilter === 'all' || repo.visibility === visibilityFilter;
+            const ownerMatch = ownerFilter === 'all' || repo.owner.login === ownerFilter;
+            return visibilityMatch && ownerMatch;
+        });
+    }, [repos, visibilityFilter, ownerFilter]);
+
+    // Filter change handlers
+    const handleVisibilityChange = (value) => {
+        setVisibilityFilter(value);
+    };
+
+    const handleOwnerChange = (value) => {
+        setOwnerFilter(value);
     };
 
 
@@ -109,12 +157,52 @@ export default function Repos() {
               </p>
             </div>
 
+            {/* Filter Bar */}
+            {repos.length > 0 && (
+              <FilterBar
+                visibilityFilter={visibilityFilter}
+                ownerFilter={ownerFilter}
+                onVisibilityChange={handleVisibilityChange}
+                onOwnerChange={handleOwnerChange}
+                repos={repos}
+              />
+            )}
+
             {/* Repositories Grid */}
-            {repos.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {repos.map(repo => (
-                  <RepoBlock key={repo.id} repo={repo} onPolishClick={handlePolishClick} />
-                ))}
+            {filteredRepos.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredRepos.map(repo => (
+                    <RepoBlock key={repo.id} repo={repo} onPolishClick={handlePolishClick} />
+                  ))}
+                </div>
+                
+                {/* Pagination */}
+                <Pagination 
+                  pagination={pagination} 
+                  onPageChange={handlePageChange} 
+                />
+              </>
+            ) : repos.length > 0 ? (
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Repositories Match Your Filters</h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Try adjusting your visibility or owner type filters to see more repositories.
+                </p>
+                <button
+                  onClick={() => {
+                    setVisibilityFilter('all');
+                    setOwnerFilter('all');
+                  }}
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-200"
+                >
+                  Clear All Filters
+                </button>
               </div>
             ) : (
               <div className="text-center">
@@ -124,7 +212,7 @@ export default function Repos() {
                   </svg>
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Repositories Found</h2>
-                <p className="text-gray-600 dark:text-gray-300">It looks like you don't have any public repositories yet.</p>
+                <p className="text-gray-600 dark:text-gray-300">It looks like you don't have any repositories yet.</p>
               </div>
             )}
           </div>
