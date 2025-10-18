@@ -64,4 +64,26 @@ export const fetchGithubRepos = async (token, page=null, perPage=null) => {
   }
 };
 
+export const generateRepoData = async (token, repo, owner) => {
+  try {
+    const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/readmeGen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ githubtoken: token, repo: repo, owner: owner })
+    });
+
+    if (!res.ok) {
+      // prefer to inspect body on error
+      const text = await res.text();
+      throw new Error(`Request failed (${res.status}): ${text}`);
+    }
+
+    const data = await res.json(); // parse JSON body
+
+    return data;
+  } catch (err) {
+  console.error('Fetch error:', err);
+  }
+}
+
 
