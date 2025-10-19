@@ -1,7 +1,14 @@
 {
-  "functions": {
-    "source": "functions"
-  },
+  "functions": [
+    {
+      "source": "functions/checklist",
+      "codebase": "checklist"
+    },
+    {
+      "source": "functions/other",
+      "codebase": "other"
+    }
+],
   "emulators": {
     "functions": {
       "port": 5001

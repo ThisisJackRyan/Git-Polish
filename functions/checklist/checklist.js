@@ -275,7 +275,7 @@ export const generateChecklist = onRequest(async (req, res) => {
     let ai;
     try {
         const [accessResponse] = await secretClient.accessSecretVersion({ name: secretName });
-        const apiKey = accessResponse.payload.data.toString("utf8");
+        const apiKey = process.env.GEMINI_API_KEY || accessResponse.payload.data.toString("utf8");
         ai = new GoogleGenAI({ apiKey });
     } catch (err) {
         logger.error('failed to access secret', err);

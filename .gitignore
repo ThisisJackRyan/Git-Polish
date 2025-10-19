@@ -41,4 +41,5 @@ yarn-error.log*
 next-env.d.ts
 
 # functions
-/functions/node_modules
+/functions/readme/node_modules
+/functions/checklist/node_modules

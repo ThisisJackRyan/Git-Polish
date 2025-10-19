@@ -184,4 +184,4 @@ export const readmeGen = onRequest(async (req, res) => {
 });
 
 // Export the checklist function
-export { generateChecklist } from './checklist.js';
+export { generateChecklist } from '../checklist/checklist.js';

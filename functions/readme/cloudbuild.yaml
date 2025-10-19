@@ -1,0 +1,36 @@
+steps:
+- name: 'node:22'
+  entrypoint: 'bash'
+  # run install + next build in your functions or project dir as needed
+  args:
+    - '-c'
+    - |
+      cd functions
+      npm ci || npm install
+      npm run build
+  # the NEXT_PUBLIC_FIREBASE_API_KEY env will be populated from availableSecrets below
+  env:
+    - 'NEXT_PUBLIC_FIREBASE_API_KEY'
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      # deploy the function (adjust --source if your function source is different)
+      gcloud functions deploy readmeGen \
+        --gen2 --runtime nodejs22 --source=./functions \
+        --region=${_REGION} \
+        --trigger-http --allow-unauthenticated \
+        --service-account=${_SERVICE_ACCOUNT}
+
+substitutions:
+  _REGION: "us-central1"
+  _SERVICE_ACCOUNT: "gitpolish-sa-readme@gitpolish.iam.gserviceaccount.com"
+
+availableSecrets:
+  secretManager:
+    - versionName: "projects/YOUR_PROJECT_ID/secrets/NEXT_PUBLIC_FIREBASE_API_KEY/versions/latest"
+      env: "NEXT_PUBLIC_FIREBASE_API_KEY"
+
+timeout: 1200s
