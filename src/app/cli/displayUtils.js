@@ -131,11 +131,13 @@ export const promptUserInput = (question) => {
 };
 
 export const promptRepoDetails = async () => {
+  console.log('');
   console.log('💡 Tip: You can use the "git-polish list" command to see your repositories and find the owner/repo names.');
   console.log('');
   
   const owner = await promptUserInput('Enter the repository owner (username/organization): ');
   const repo = await promptUserInput('Enter the repository name: ');
+  console.log('')
   
   return { owner, repo };
 };

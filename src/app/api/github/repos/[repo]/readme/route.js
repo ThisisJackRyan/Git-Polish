@@ -1,6 +1,6 @@
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url)
-    const { repo } = params;
+    const { repo } = await params;
     const token = searchParams.get('token')
     const owner = searchParams.get('owner')
 

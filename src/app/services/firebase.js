@@ -94,28 +94,44 @@ const fetchGitHubUser = async (accessToken) => {
 };
 
 const displayUserInstructions = (verificationUri, userCode) => {
+  console.log('');
   console.log(`Go to: ${verificationUri}`);
   console.log(`Enter code: ${userCode}`);
+  console.log('');
 };
 
 const waitForAuthorization = async (clientId, deviceCode, expiresIn, interval) => {
+  const { default: ora } = await import('ora');
+  const spinner = ora({
+    text: 'Waiting for GitHub browser authentication...',
+    color: 'magenta'
+  }).start();
+  
   const startTime = Date.now();
   
-  while (Date.now() - startTime < expiresIn * 1000) {
-    await new Promise(resolve => setTimeout(resolve, interval * 1000));
-    
-    const tokenData = await pollForAccessToken(clientId, deviceCode);
-    
-    if (tokenData.access_token) {
-      return tokenData.access_token;
+  try {
+    while (Date.now() - startTime < expiresIn * 1000) {
+      await new Promise(resolve => setTimeout(resolve, interval * 1000));
+      
+      const tokenData = await pollForAccessToken(clientId, deviceCode);
+      
+      if (tokenData.access_token) {
+        spinner.succeed('GitHub authentication completed!');
+        return tokenData.access_token;
+      }
+      
+      if (tokenData.error !== 'authorization_pending') {
+        spinner.fail('GitHub authentication failed');
+        throw new Error(tokenData.error);
+      }
     }
     
-    if (tokenData.error !== 'authorization_pending') {
-      throw new Error(tokenData.error);
-    }
+    spinner.fail('GitHub authentication timed out');
+    throw new Error('Authentication timeout');
+  } catch (error) {
+    spinner.fail('GitHub authentication failed');
+    throw error;
   }
-  
-  throw new Error('Authentication timeout');
 };
 
 

@@ -123,6 +123,78 @@ export const getUpdatedDescriptionBasedOnReadMe = async(token, repo, owner) => {
   }
 }
 
+export const generateChecklistData = async (token, repo, owner) => {
+  try {
+    const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/generateChecklist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ githubtoken: token, repo: repo, owner: owner })
+    });
+
+    if (!res.ok) {
+      // prefer to inspect body on error
+      const text = await res.text();
+      throw new Error(`Request failed (${res.status}): ${text}`);
+    }
+
+    const data = await res.json(); // parse JSON body
+  
+    return data;
+  } catch (err) {
+    console.error('Fetch error:', err);
+  }
+}
+
+export const updateReadme = async (token, repo, owner, readmeContent, commitMessage = 'Update README') => {
+  if (!token) {
+    throw new Error('GitHub token is required');
+  }
+
+  try {
+    const path = "README.md";
+    
+    // Step 1: Try to get existing file (to grab sha)
+    const getResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: "application/vnd.github+json",
+      },
+    });
+
+    let sha = null;
+    if (getResp.ok) {
+      const fileData = await getResp.json();
+      sha = fileData.sha;
+    }
+
+    // Step 2: PUT request with sha if updating
+    const putResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: "application/vnd.github+json",
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: commitMessage,
+        content: Buffer.from(readmeContent, 'utf8').toString('base64'), // Base64 encode the content
+        sha: sha || undefined,
+      }),
+    });
+
+    if (!putResp.ok) {
+      const errorText = await putResp.text();
+      throw new Error(`Failed to update README (${putResp.status}): ${errorText}`);
+    }
+
+    const result = await putResp.json();
+    return result;
+  } catch (err) {
+    console.error('Error updating README:', err);
+    throw err;
+  }
+};
+
 export const updateDescription = async(token, repo, owner, desc) => {
   if (!token) {
     throw new Error('GitHub token is required');
@@ -152,5 +224,6 @@ export const updateDescription = async(token, repo, owner, desc) => {
   } catch(error) {
     throw new Error(`Error pushing description: ${error.message}`);
   }
-}
+};
+
 
