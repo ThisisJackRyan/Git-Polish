@@ -16,7 +16,6 @@ export default function ControlModal({ isOpen, onClose, repo }) {
   const [showReadmePreview, setShowReadmePreview] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
   const { token } = useAuth();
-
   if (!isOpen) return null;
 
   const polishActions = [
@@ -130,33 +129,13 @@ export default function ControlModal({ isOpen, onClose, repo }) {
           })
         });
 
-        if (!response.ok) {
-          throw new Error(`Failed to generate checklist: ${response.statusText}`);
-        }
-
         const data = await response.json();
         console.log('Generated checklist:', data);
         
         // Store the checklist data and show the modal
         setChecklistData(data);
         setShowChecklistModal(true);
-      } else {
-        // Handle other actions (existing logic)
-        console.log(`Executing ${selectedAction} for repo:`, repo.name);
-        
-        // Simulate processing for other actions
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-    } catch (error) {
-      console.error('Error executing action:', error);
-      alert(`Error: ${error.message}`);
-    } finally {
-      setIsProcessing(false);
-      onClose();
-    setError(null);
-
-    try {
-      if (selectedAction === 'readme') {
+      } else if (selectedAction === 'readme') {
         const content = await callGenerateReadme();
         setReadmeContent(content);
         setShowReadmePreview(true);
@@ -197,15 +176,14 @@ export default function ControlModal({ isOpen, onClose, repo }) {
       }),
     })
     if(resp.ok){
-      alert("It worked ")
+      alert("README Updated ")
     }
     else{
       console.log(resp)
       alert("it did not")
     }
-    // Placeholder: in future, commit README to repo or open PR
-    // setShowReadmePreview(false);
-    // onClose();
+    setShowReadmePreview(false);
+    onClose();
   };
 
   const handleDeclineReadme = () => {
@@ -344,4 +322,4 @@ export default function ControlModal({ isOpen, onClose, repo }) {
     </div>
   );
 }
-}
+

@@ -66,6 +66,7 @@ export default function Repos() {
     };
 
     const handlePolishClick = (repo) => {
+        console.log("did we get here")
         setSelectedRepo(repo);
         setIsModalOpen(true);
     };
