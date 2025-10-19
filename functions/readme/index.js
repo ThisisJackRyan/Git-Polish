@@ -9,7 +9,6 @@ import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 
 const GITHUB_API = 'https://api.github.com';
 
-// Secret client is created at module load; secret access happens inside the handler
 const secretClient = new SecretManagerServiceClient();
 const secretName = "projects/378480993455/secrets/gemini-api/versions/latest";
 
@@ -25,7 +24,51 @@ function extractZip(zipPath) {
 // --- Helper: Collect key files for analysis ---
 function collectImportantFiles(baseDir) {
     const importantFiles = [];
-    const filePatterns = ["README", "package.json", ".py", ".js", ".ts", ".html", "index", ".c", ".cpp", "main", ];
+    const filePatterns = [
+        // docs & metadata
+        "readme", "readme.md", ".md", ".markdown", "license", "changelog", "contributing", "contributing.md",
+        "code_of_conduct", "code_of_conduct.md",
+
+        // node / js ecosystem
+        "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "pnpm-lock.yml", "webpack.config", "rollup.config", "vite.config", "babel.config", ".babelrc", ".eslintrc", "tsconfig.json", "jsconfig.json", ".prettierrc", "prettier.config", "jest.config", "babel.config.json",
+
+        // docker / infra
+        "dockerfile", "docker-compose.yml", ".dockerignore", "procfile", "vagrantfile",
+
+        // ci / tooling
+        ".github", ".github/workflows", ".gitlab-ci.yml", ".travis.yml", "circle.yml", ".circleci", "azure-pipelines.yml",
+
+        // build systems & package managers
+        "pom.xml", "build.gradle", "gradle.properties", "gradlew", "gradlew.bat", "go.mod", "go.sum", "cargo.toml", "cargo.lock", "composer.json",
+
+        // python
+        "requirements.txt", "pipfile", "pipfile.lock", "setup.py", "setup.cfg", "pyproject.toml", "manage.py",
+
+        // ruby
+        "gemfile", "gemfile.lock", "rakefile",
+
+        // common web / frontend files
+        ".html", ".htm", "index.html", ".css", ".scss", ".less", ".svelte", ".vue",
+
+        // source file extensions (many languages)
+        ".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs",
+        ".py", ".java", ".kt", ".kts", ".swift", ".rb", ".php", ".go", ".rs", ".c", ".cpp", ".h", ".hpp", ".m", ".mm",
+
+        // scripts / shells
+        ".sh", ".bash", ".zsh", ".ps1", ".bat",
+
+        // common entry filenames
+        "index", "index.js", "index.ts", "index.jsx", "index.tsx", "main", "main.go", "main.rs", "app", "server", "cli", "handler",
+
+        // tests / specs
+        "test", ".spec", ".test", "spec",
+
+        // other common config / manifests
+        ".gitignore", ".gitattributes", "manifest", "androidmanifest.xml", "androidmanifest.xml", "pom", ".env", ".env.example", ".env.sample",
+
+        // fallback textual formats
+        ".txt", ".rst", ".toml", ".yml", ".yaml", ".xml", ".json"
+    ];
 
     function walk(dir) {
         for (const item of fs.readdirSync(dir)) {
@@ -63,6 +106,9 @@ async function summarizeRepoWithGemini(files, ai) {
         5. the usage of the repo
         Do NOT pay super close attention to package.json.
         Use it to cross reference what they ACTUALLY USE in the repo.
+        Do NOT use ANY PLACEHOLDERS! This is a final product.
+        Do NOT say anything about licencing.
+        Keep installation steps concise. If it's not clear, do not include them at all.
     `;
 
     const response = await ai.models.generateContent({
@@ -76,9 +122,6 @@ async function summarizeRepoWithGemini(files, ai) {
 export const readmeGen = onRequest(async (req, res) => {
     logger.info('readmeGen started', { method: req.method, path: req.path });
 
-    // Construct AI client inside handler after resolving the secret key so we
-    // don't use top-level await which can crash container startup on platforms
-    // that disallow it during build.
     let ai;
     try {
         const [accessResponse] = await secretClient.accessSecretVersion({ name: secretName });
@@ -90,7 +133,6 @@ export const readmeGen = onRequest(async (req, res) => {
         return;
     }
 
-    // Handle CORS
     if (req.method === 'OPTIONS') {
         res.set('Access-Control-Allow-Origin', '*');
         res.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -111,7 +153,6 @@ export const readmeGen = onRequest(async (req, res) => {
             return;
         }
 
-        // Use the GitHub API to fetch the repository zipball (default branch)
         const zipApiUrl = `${GITHUB_API}/repos/${owner}/${repo}/zipball`;
         logger.info(`Requesting repo ZIP from: ${zipApiUrl}`);
         const zipRes = await fetch(zipApiUrl, {
@@ -131,13 +172,10 @@ export const readmeGen = onRequest(async (req, res) => {
             return;
         }
 
-        // Write zip to temp file for the rest of the handler to use
-        const tmpZipPath = path.join(os.tmpdir(), "repo.zip");
         const zipBuffer = Buffer.from(await zipRes.arrayBuffer());
         fs.writeFileSync(tmpZipPath, zipBuffer);
         logger.info(`Repository ZIP downloaded to ${tmpZipPath}`);
 
-        // If a repoUrl wasn't supplied, point it to the downloaded zip so downstream code can consume it
         if (!repoUrl) {
             repoUrl = tmpZipPath;
         }
@@ -147,16 +185,12 @@ export const readmeGen = onRequest(async (req, res) => {
             return;
         }
 
-        // Step 2: Extract ZIP
         const extractedDir = extractZip(repoUrl);
 
-        // Step 3: Find key files
         const files = collectImportantFiles(extractedDir);
 
-        // Step 4: Summarize via Gemini
         const summary = await summarizeRepoWithGemini(files, ai);
 
-        // Step 5: Return response
         logger.info('readmeGen finished successfully');
         res.set('Access-Control-Allow-Origin', '*');
         res.status(200).send({ summary });
@@ -165,6 +199,3 @@ export const readmeGen = onRequest(async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 });
-
-// Export the checklist function
-export { generateChecklist } from '../checklist/checklist.js';

@@ -1,0 +1,470 @@
+[debug] [2025-10-19T04:18:02.439Z] ----------------------------------------------------------------------
+[debug] [2025-10-19T04:18:02.441Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --only functions
+[debug] [2025-10-19T04:18:02.442Z] CLI Version:   14.20.0
+[debug] [2025-10-19T04:18:02.442Z] Platform:      win32
+[debug] [2025-10-19T04:18:02.442Z] Node Version:  v22.18.0
+[debug] [2025-10-19T04:18:02.442Z] Time:          Sat Oct 18 2025 23:18:02 GMT-0500 (Central Daylight Time)
+[debug] [2025-10-19T04:18:02.442Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-19T04:18:02.603Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] Failed to authenticate, have you run firebase login?
+[warn] !  emulators: You are not currently authenticated so some features may not work correctly. Please run firebase login to authenticate the CLI. 
+[info] i  emulators: Starting emulators: functions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: functions"}}
+[info] i  emulators: Detected demo project ID "demo-no-project", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail. {"metadata":{"emulator":{"name":"hub"},"message":"Detected demo project ID \"demo-no-project\", emulated services will use a demo configuration and attempts to access non-emulated services for this project will fail."}}
+[debug] [2025-10-19T04:18:02.630Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-10-19T04:18:02.630Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2025-10-19T04:18:02.633Z] Emulator locator file path: C:\Users\coolj\AppData\Local\Temp\hub-demo-no-project.json
+[debug] [2025-10-19T04:18:02.633Z] [hub] writing locator at C:\Users\coolj\AppData\Local\Temp\hub-demo-no-project.json
+[debug] [2025-10-19T04:18:02.649Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-10-19T04:18:02.650Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-10-19T04:18:02.650Z] [tasks] Cloud Tasks Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-10-19T04:18:02.650Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[info] i  functions: Watching "C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\checklist" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\checklist\" for Cloud Functions..."}}
+[debug] [2025-10-19T04:18:02.669Z] Validating nodejs source
+[debug] [2025-10-19T04:18:03.251Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "checklist.js",
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.1",
+    "@google/genai": "^1.25.0",
+    "adm-zip": "^0.5.16",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-tools": "^14.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-10-19T04:18:03.251Z] Building nodejs source
+[debug] [2025-10-19T04:18:03.252Z] Failed to find version of module node: reached end of search path C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\checklist\node_modules
+[info] +  functions: Using node@22 from host. 
+[debug] [2025-10-19T04:18:03.254Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-19T04:18:03.262Z] Found firebase-functions binary at 'C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\checklist\node_modules\.bin\firebase-functions'
+[info] Serving at port 8215
+
+[debug] [2025-10-19T04:18:03.941Z] Got response from /__/functions.yaml {"endpoints":{"generateChecklist":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"generateChecklist"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] +  functions: Loaded functions definitions from source: generateChecklist. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: generateChecklist."}}
+[info] +  functions[us-central1-generateChecklist]: http function initialized (http://127.0.0.1:5001/demo-no-project/us-central1/generateChecklist). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/demo-no-project/us-central1/generateChecklist)."}}
+[info] i  functions: Watching "C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\" for Cloud Functions..."}}
+[debug] [2025-10-19T04:18:07.989Z] Validating nodejs source
+[debug] [2025-10-19T04:18:08.615Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.1",
+    "@google/genai": "^1.25.0",
+    "adm-zip": "^0.5.16",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-tools": "^14.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-10-19T04:18:08.615Z] Building nodejs source
+[debug] [2025-10-19T04:18:08.615Z] Failed to find version of module node: reached end of search path C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules
+[info] +  functions: Using node@22 from host. 
+[debug] [2025-10-19T04:18:08.617Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-19T04:18:08.624Z] Found firebase-functions binary at 'C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules\.bin\firebase-functions'
+[info] Serving at port 8150
+
+[debug] [2025-10-19T04:18:09.803Z] Got response from /__/functions.yaml {"endpoints":{"generateChecklist":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"generateChecklist"},"readmeGen":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"readmeGen"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] +  functions: Loaded functions definitions from source: generateChecklist, readmeGen. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: generateChecklist, readmeGen."}}
+[info] +  functions[us-central1-generateChecklist]: http function initialized (http://127.0.0.1:5001/demo-no-project/us-central1/generateChecklist). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/demo-no-project/us-central1/generateChecklist)."}}
+[info] +  functions[us-central1-readmeGen]: http function initialized (http://127.0.0.1:5001/demo-no-project/us-central1/readmeGen). {"metadata":{"emulator":{"name":"functions"},"message":"\u001b[1mhttp\u001b[22m function initialized (http://127.0.0.1:5001/demo-no-project/us-central1/readmeGen)."}}
+[debug] [2025-10-19T04:18:13.843Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌───────────┬────────────────┬─────────────────────────────────┐
+│ Emulator  │ Host:Port      │ View in Emulator UI             │
+├───────────┼────────────────┼─────────────────────────────────┤
+│ Functions │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions │
+└───────────┴────────────────┴─────────────────────────────────┘
+  Emulator Hub host: 127.0.0.1 port: 4400
+  Other reserved ports: 4500
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[debug] [2025-10-19T04:18:50.613Z] [work-queue] {"queuedWork":["/demo-no-project/us-central1/readmeGen-2025-10-19T04:18:50.613Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-10-19T04:18:50.614Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/demo-no-project/us-central1/readmeGen-2025-10-19T04:18:50.613Z"],"workRunningCount":1}
+[debug] [2025-10-19T04:18:50.614Z] Accepted request POST /demo-no-project/us-central1/readmeGen --> us-central1-readmeGen
+[debug] [2025-10-19T04:18:50.615Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-10-19T04:18:50.615Z] [functions] Got req.url=/demo-no-project/us-central1/readmeGen, mapping to path=/ {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/demo-no-project/us-central1/readmeGen, mapping to path=/"}}
+[debug] [2025-10-19T04:18:50.623Z] [worker-pool] addWorker(us-central1-readmeGen) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] addWorker(us-central1-readmeGen)"}}
+[debug] [2025-10-19T04:18:50.624Z] [worker-pool] Adding worker with key us-central1-readmeGen, total=1 {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] Adding worker with key us-central1-readmeGen, total=1"}}
+[debug] [2025-10-19T04:18:51.533Z] [runtime-status] [4852] Resolved module firebase-admin {"declared":true,"installed":true,"version":"13.5.0","resolution":"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-admin\\lib\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] Resolved module firebase-admin {\"declared\":true,\"installed\":true,\"version\":\"13.5.0\",\"resolution\":\"C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-admin\\\\lib\\\\index.js\"}"}}
+[debug] [2025-10-19T04:18:51.534Z] [runtime-status] [4852] Resolved module firebase-functions {"declared":true,"installed":true,"version":"6.5.0","resolution":"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"6.5.0\",\"resolution\":\"C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\index.js\"}"}}
+[debug] [2025-10-19T04:18:51.534Z] [runtime-status] [4852] Outgoing network have been stubbed. [{"name":"http","status":"mocked"},{"name":"http","status":"mocked"},{"name":"https","status":"mocked"},{"name":"https","status":"mocked"},{"name":"net","status":"mocked"}] {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] Outgoing network have been stubbed. [{\"name\":\"http\",\"status\":\"mocked\"},{\"name\":\"http\",\"status\":\"mocked\"},{\"name\":\"https\",\"status\":\"mocked\"},{\"name\":\"https\",\"status\":\"mocked\"},{\"name\":\"net\",\"status\":\"mocked\"}]"}}
+[debug] [2025-10-19T04:18:51.535Z] [runtime-status] [4852] Resolved module firebase-functions {"declared":true,"installed":true,"version":"6.5.0","resolution":"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"6.5.0\",\"resolution\":\"C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\index.js\"}"}}
+[debug] [2025-10-19T04:18:51.806Z] [runtime-status] [4852] Checked functions.config() {"config":{}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] Checked functions.config() {\"config\":{}}"}}
+[debug] [2025-10-19T04:18:51.807Z] [runtime-status] [4852] firebase-functions has been stubbed. {"functionsResolution":{"declared":true,"installed":true,"version":"6.5.0","resolution":"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\index.js"}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] firebase-functions has been stubbed. {\"functionsResolution\":{\"declared\":true,\"installed\":true,\"version\":\"6.5.0\",\"resolution\":\"C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\index.js\"}}"}}
+[debug] [2025-10-19T04:18:51.807Z] [runtime-status] [4852] Resolved module firebase-functions {"declared":true,"installed":true,"version":"6.5.0","resolution":"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"6.5.0\",\"resolution\":\"C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\index.js\"}"}}
+[debug] [2025-10-19T04:18:51.812Z] [runtime-status] [4852] Resolved module firebase-admin {"declared":true,"installed":true,"version":"13.5.0","resolution":"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-admin\\lib\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] Resolved module firebase-admin {\"declared\":true,\"installed\":true,\"version\":\"13.5.0\",\"resolution\":\"C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-admin\\\\lib\\\\index.js\"}"}}
+[debug] [2025-10-19T04:18:51.815Z] [runtime-status] [4852] Resolved module firebase-functions {"declared":true,"installed":true,"version":"6.5.0","resolution":"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\index.js"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] Resolved module firebase-functions {\"declared\":true,\"installed\":true,\"version\":\"6.5.0\",\"resolution\":\"C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\index.js\"}"}}
+[debug] [2025-10-19T04:18:51.815Z] [runtime-status] [4852] firebase-admin has been stubbed. {"adminResolution":{"declared":true,"installed":true,"version":"13.5.0","resolution":"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-admin\\lib\\index.js"}} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] firebase-admin has been stubbed. {\"adminResolution\":{\"declared\":true,\"installed\":true,\"version\":\"13.5.0\",\"resolution\":\"C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-admin\\\\lib\\\\index.js\"}}"}}
+[debug] [2025-10-19T04:18:52.381Z] [runtime-status] [4852] Functions runtime initialized. {"cwd":"C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme","node_version":"22.18.0"} {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] Functions runtime initialized. {\"cwd\":\"C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\",\"node_version\":\"22.18.0\"}"}}
+[debug] [2025-10-19T04:18:52.381Z] [runtime-status] [4852] Listening to port: \\?\pipe\fire_emu_0a86da0001310295 {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[runtime-status] [4852] Listening to port: \\\\?\\pipe\\fire_emu_0a86da0001310295"}}
+[debug] [2025-10-19T04:18:52.441Z] [worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: IDLE"}}
+[debug] [2025-10-19T04:18:52.441Z] [worker-pool] submitRequest(triggerId=us-central1-readmeGen) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-readmeGen)"}}
+[info] i  functions: Beginning execution of "us-central1-readmeGen" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"Beginning execution of \"us-central1-readmeGen\""}}
+[debug] [2025-10-19T04:18:52.442Z] [worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: BUSY"}}
+[info] >  {"method":"POST","path":"/","severity":"INFO","message":"readmeGen started"} {"user":{"method":"POST","path":"/","severity":"INFO","message":"readmeGen started"},"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"\u001b[90m> \u001b[39m {\"method\":\"POST\",\"path\":\"/\",\"severity\":\"INFO\",\"message\":\"readmeGen started\"}"}}
+[info] >  {"severity":"ERROR","message":"failed to access secret ReferenceError: accessResponse is not defined\n    at file:///C:/Users/coolj/Desktop/code/gitpolish/Git-Polish/functions/readme/index.js:136:54\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\providers\\https.js:89:29\n    at cors (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:188:7)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:224:17\n    at originCallback (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:214:15)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:219:13\n    at optionsCallback (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:199:9)\n    at corsMiddleware (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:204:7)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\providers\\https.js:88:17\n    at new Promise (<anonymous>)"} {"user":{"severity":"ERROR","message":"failed to access secret ReferenceError: accessResponse is not defined\n    at file:///C:/Users/coolj/Desktop/code/gitpolish/Git-Polish/functions/readme/index.js:136:54\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\providers\\https.js:89:29\n    at cors (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:188:7)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:224:17\n    at originCallback (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:214:15)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:219:13\n    at optionsCallback (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:199:9)\n    at corsMiddleware (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:204:7)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\providers\\https.js:88:17\n    at new Promise (<anonymous>)"},"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"\u001b[90m> \u001b[39m {\"severity\":\"ERROR\",\"message\":\"failed to access secret ReferenceError: accessResponse is not defined\\n    at file:///C:/Users/coolj/Desktop/code/gitpolish/Git-Polish/functions/readme/index.js:136:54\\n    at C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\providers\\\\https.js:89:29\\n    at cors (C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:188:7)\\n    at C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:224:17\\n    at originCallback (C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:214:15)\\n    at C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:219:13\\n    at optionsCallback (C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:199:9)\\n    at corsMiddleware (C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:204:7)\\n    at C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\providers\\\\https.js:88:17\\n    at new Promise (<anonymous>)\"}"}}
+[debug] [2025-10-19T04:18:52.466Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-readmeGen" in 24.7058ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"Finished \"us-central1-readmeGen\" in 24.7058ms"}}
+[debug] [2025-10-19T04:18:52.467Z] [worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: IDLE"}}
+[debug] [2025-10-19T04:18:52.467Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-10-19T04:18:52.468Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-10-19T04:18:52.468Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[debug] [2025-10-19T04:19:35.964Z] File C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\index.js changed, reloading triggers"}}
+[debug] [2025-10-19T04:19:36.970Z] Validating nodejs source
+[debug] [2025-10-19T04:19:37.824Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.1",
+    "@google/genai": "^1.25.0",
+    "adm-zip": "^0.5.16",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-tools": "^14.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-10-19T04:19:37.824Z] Building nodejs source
+[debug] [2025-10-19T04:19:37.824Z] Failed to find version of module node: reached end of search path C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules
+[info] +  functions: Using node@22 from host. 
+[debug] [2025-10-19T04:19:37.825Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-19T04:19:37.831Z] Found firebase-functions binary at 'C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules\.bin\firebase-functions'
+[info] Serving at port 8557
+
+[debug] [2025-10-19T04:19:38.778Z] Got response from /__/functions.yaml {"endpoints":{"generateChecklist":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"generateChecklist"},"readmeGen":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"readmeGen"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[debug] [2025-10-19T04:19:39.514Z] [work-queue] {"queuedWork":["/demo-no-project/us-central1/readmeGen-2025-10-19T04:19:39.514Z"],"queueLength":1,"runningWork":[],"workRunningCount":0}
+[debug] [2025-10-19T04:19:39.515Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":["/demo-no-project/us-central1/readmeGen-2025-10-19T04:19:39.514Z"],"workRunningCount":1}
+[debug] [2025-10-19T04:19:39.515Z] Accepted request POST /demo-no-project/us-central1/readmeGen --> us-central1-readmeGen
+[debug] [2025-10-19T04:19:39.515Z] [functions] Runtime ready! Sending request! {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Runtime ready! Sending request!"}}
+[debug] [2025-10-19T04:19:39.515Z] [functions] Got req.url=/demo-no-project/us-central1/readmeGen, mapping to path=/ {"metadata":{"emulator":{"name":"functions"},"message":"[functions] Got req.url=/demo-no-project/us-central1/readmeGen, mapping to path=/"}}
+[debug] [2025-10-19T04:19:39.515Z] [worker-pool] submitRequest(triggerId=us-central1-readmeGen) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] submitRequest(triggerId=us-central1-readmeGen)"}}
+[info] i  functions: Beginning execution of "us-central1-readmeGen" {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"Beginning execution of \"us-central1-readmeGen\""}}
+[debug] [2025-10-19T04:19:39.516Z] [worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: BUSY {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: BUSY"}}
+[info] >  {"method":"POST","path":"/","severity":"INFO","message":"readmeGen started"} {"user":{"method":"POST","path":"/","severity":"INFO","message":"readmeGen started"},"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"\u001b[90m> \u001b[39m {\"method\":\"POST\",\"path\":\"/\",\"severity\":\"INFO\",\"message\":\"readmeGen started\"}"}}
+[info] >  {"severity":"ERROR","message":"failed to access secret ReferenceError: accessResponse is not defined\n    at file:///C:/Users/coolj/Desktop/code/gitpolish/Git-Polish/functions/readme/index.js:136:54\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\providers\\https.js:89:29\n    at cors (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:188:7)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:224:17\n    at originCallback (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:214:15)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:219:13\n    at optionsCallback (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:199:9)\n    at corsMiddleware (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:204:7)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\providers\\https.js:88:17\n    at new Promise (<anonymous>)"} {"user":{"severity":"ERROR","message":"failed to access secret ReferenceError: accessResponse is not defined\n    at file:///C:/Users/coolj/Desktop/code/gitpolish/Git-Polish/functions/readme/index.js:136:54\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\providers\\https.js:89:29\n    at cors (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:188:7)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:224:17\n    at originCallback (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:214:15)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:219:13\n    at optionsCallback (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:199:9)\n    at corsMiddleware (C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\cors\\lib\\index.js:204:7)\n    at C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\node_modules\\firebase-functions\\lib\\v2\\providers\\https.js:88:17\n    at new Promise (<anonymous>)"},"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"\u001b[90m> \u001b[39m {\"severity\":\"ERROR\",\"message\":\"failed to access secret ReferenceError: accessResponse is not defined\\n    at file:///C:/Users/coolj/Desktop/code/gitpolish/Git-Polish/functions/readme/index.js:136:54\\n    at C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\providers\\\\https.js:89:29\\n    at cors (C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:188:7)\\n    at C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:224:17\\n    at originCallback (C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:214:15)\\n    at C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:219:13\\n    at optionsCallback (C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:199:9)\\n    at corsMiddleware (C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\cors\\\\lib\\\\index.js:204:7)\\n    at C:\\\\Users\\\\coolj\\\\Desktop\\\\code\\\\gitpolish\\\\Git-Polish\\\\functions\\\\readme\\\\node_modules\\\\firebase-functions\\\\lib\\\\v2\\\\providers\\\\https.js:88:17\\n    at new Promise (<anonymous>)\"}"}}
+[debug] [2025-10-19T04:19:39.521Z] Finishing up request with event=pause {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"Finishing up request with event=pause"}}
+[info] i  functions: Finished "us-central1-readmeGen" in 4.9961ms {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"Finished \"us-central1-readmeGen\" in 4.9961ms"}}
+[debug] [2025-10-19T04:19:39.521Z] [worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: IDLE {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: IDLE"}}
+[debug] [2025-10-19T04:19:39.522Z] Finishing up request with event=finish {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"Finishing up request with event=finish"}}
+[debug] [2025-10-19T04:19:39.522Z] Finishing up request with event=close {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"Finishing up request with event=close"}}
+[debug] [2025-10-19T04:19:39.522Z] [work-queue] {"queuedWork":[],"queueLength":0,"runningWork":[],"workRunningCount":0}
+[info] +  functions: Loaded functions definitions from source: generateChecklist, readmeGen. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: generateChecklist, readmeGen."}}
+[debug] [2025-10-19T04:19:42.810Z] [worker-pool] Shutting down IDLE worker (us-central1-readmeGen) {"metadata":{"emulator":{"name":"functions"},"message":"[worker-pool] Shutting down IDLE worker (us-central1-readmeGen)"}}
+[debug] [2025-10-19T04:19:42.810Z] [worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: FINISHING {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: FINISHING"}}
+[debug] [2025-10-19T04:19:42.822Z] [worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: exited {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: exited"}}
+[debug] [2025-10-19T04:19:42.822Z] [worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: FINISHED {"metadata":{"emulator":{"name":"functions"},"function":{"name":"us-central1-readmeGen"},"extension":{},"message":"[worker-us-central1-readmeGen-e3aaeded-b15d-459f-a399-9fdeba35e266]: FINISHED"}}
+[debug] [2025-10-19T04:23:24.088Z] File C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\index.js changed, reloading triggers"}}
+[debug] [2025-10-19T04:23:25.094Z] Validating nodejs source
+[debug] [2025-10-19T04:23:25.770Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.1",
+    "@google/genai": "^1.25.0",
+    "adm-zip": "^0.5.16",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-tools": "^14.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-10-19T04:23:25.770Z] Building nodejs source
+[debug] [2025-10-19T04:23:25.770Z] Failed to find version of module node: reached end of search path C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules
+[info] +  functions: Using node@22 from host. 
+[debug] [2025-10-19T04:23:25.772Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-19T04:23:25.776Z] Found firebase-functions binary at 'C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules\.bin\firebase-functions'
+[info] Serving at port 8448
+
+[debug] [2025-10-19T04:23:26.792Z] Got response from /__/functions.yaml {"endpoints":{"generateChecklist":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"generateChecklist"},"readmeGen":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"readmeGen"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] +  functions: Loaded functions definitions from source: generateChecklist, readmeGen. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: generateChecklist, readmeGen."}}
+[debug] [2025-10-19T04:23:35.852Z] File C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\checklist\checklist.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\checklist\\checklist.js changed, reloading triggers"}}
+[debug] [2025-10-19T04:23:36.864Z] Validating nodejs source
+[debug] [2025-10-19T04:23:37.476Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "checklist.js",
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.1",
+    "@google/genai": "^1.25.0",
+    "adm-zip": "^0.5.16",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-tools": "^14.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-10-19T04:23:37.476Z] Building nodejs source
+[debug] [2025-10-19T04:23:37.476Z] Failed to find version of module node: reached end of search path C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\checklist\node_modules
+[info] +  functions: Using node@22 from host. 
+[debug] [2025-10-19T04:23:37.477Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-19T04:23:37.482Z] Found firebase-functions binary at 'C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\checklist\node_modules\.bin\firebase-functions'
+[info] Serving at port 8237
+
+[debug] [2025-10-19T04:23:38.201Z] Got response from /__/functions.yaml {"endpoints":{"generateChecklist":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"generateChecklist"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] +  functions: Loaded functions definitions from source: generateChecklist. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: generateChecklist."}}
+[debug] [2025-10-19T04:36:55.032Z] File C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\index.js changed, reloading triggers"}}
+[debug] [2025-10-19T04:36:56.040Z] Validating nodejs source
+[debug] [2025-10-19T04:36:56.737Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.1",
+    "@google/genai": "^1.25.0",
+    "adm-zip": "^0.5.16",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-tools": "^14.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-10-19T04:36:56.737Z] Building nodejs source
+[debug] [2025-10-19T04:36:56.737Z] Failed to find version of module node: reached end of search path C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules
+[info] +  functions: Using node@22 from host. 
+[debug] [2025-10-19T04:36:56.738Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-19T04:36:56.745Z] Found firebase-functions binary at 'C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules\.bin\firebase-functions'
+[info] Serving at port 8607
+
+[debug] [2025-10-19T04:36:57.492Z] Got response from /__/functions.yaml {"endpoints":{"readmeGen":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"readmeGen"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] +  functions: Loaded functions definitions from source: readmeGen. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: readmeGen."}}
+[debug] [2025-10-19T04:47:26.595Z] File C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\index.js changed, reloading triggers"}}
+[debug] [2025-10-19T04:47:27.597Z] Validating nodejs source
+[debug] [2025-10-19T04:47:28.317Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.1",
+    "@google/genai": "^1.25.0",
+    "adm-zip": "^0.5.16",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-tools": "^14.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-10-19T04:47:28.318Z] Building nodejs source
+[debug] [2025-10-19T04:47:28.318Z] Failed to find version of module node: reached end of search path C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules
+[info] +  functions: Using node@22 from host. 
+[debug] [2025-10-19T04:47:28.320Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-19T04:47:28.328Z] Found firebase-functions binary at 'C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules\.bin\firebase-functions'
+[info] Serving at port 8729
+
+[debug] [2025-10-19T04:47:29.068Z] Got response from /__/functions.yaml {"endpoints":{"readmeGen":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"readmeGen"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] +  functions: Loaded functions definitions from source: readmeGen. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: readmeGen."}}
+[debug] [2025-10-19T04:56:15.679Z] File C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\index.js changed, reloading triggers"}}
+[debug] [2025-10-19T04:56:16.686Z] Validating nodejs source
+[debug] [2025-10-19T04:56:17.340Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.1",
+    "@google/genai": "^1.25.0",
+    "adm-zip": "^0.5.16",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-tools": "^14.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-10-19T04:56:17.340Z] Building nodejs source
+[debug] [2025-10-19T04:56:17.340Z] Failed to find version of module node: reached end of search path C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules
+[info] +  functions: Using node@22 from host. 
+[debug] [2025-10-19T04:56:17.341Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-19T04:56:17.347Z] Found firebase-functions binary at 'C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules\.bin\firebase-functions'
+[info] Serving at port 8614
+
+[debug] [2025-10-19T04:56:17.992Z] Got response from /__/functions.yaml {"endpoints":{"readmeGen":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"readmeGen"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] +  functions: Loaded functions definitions from source: readmeGen. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: readmeGen."}}
+[debug] [2025-10-19T05:02:43.415Z] File C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\index.js changed, reloading triggers {"metadata":{"emulator":{"name":"functions"},"message":"File C:\\Users\\coolj\\Desktop\\code\\gitpolish\\Git-Polish\\functions\\readme\\index.js changed, reloading triggers"}}
+[debug] [2025-10-19T05:02:44.420Z] Validating nodejs source
+[debug] [2025-10-19T05:02:45.019Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.1.1",
+    "@google/genai": "^1.25.0",
+    "adm-zip": "^0.5.16",
+    "firebase-admin": "^13.5.0",
+    "firebase-functions": "^6.0.1",
+    "firebase-tools": "^14.20.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.15.0",
+    "eslint-config-google": "^0.14.0",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-10-19T05:02:45.019Z] Building nodejs source
+[debug] [2025-10-19T05:02:45.019Z] Failed to find version of module node: reached end of search path C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules
+[info] +  functions: Using node@22 from host. 
+[debug] [2025-10-19T05:02:45.020Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-19T05:02:45.027Z] Found firebase-functions binary at 'C:\Users\coolj\Desktop\code\gitpolish\Git-Polish\functions\readme\node_modules\.bin\firebase-functions'
+[info] Serving at port 8875
+
+[debug] [2025-10-19T05:02:45.758Z] Got response from /__/functions.yaml {"endpoints":{"readmeGen":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"httpsTrigger":{},"entryPoint":"readmeGen"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] +  functions: Loaded functions definitions from source: readmeGen. {"metadata":{"emulator":{"name":"functions"},"message":"Loaded functions definitions from source: readmeGen."}}

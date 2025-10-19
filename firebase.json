@@ -5,8 +5,8 @@
       "codebase": "checklist"
     },
     {
-      "source": "functions/other",
-      "codebase": "other"
+      "source": "functions/readme",
+      "codebase": "index"
     }
 ],
   "emulators": {

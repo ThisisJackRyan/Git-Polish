@@ -9,7 +9,6 @@ import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 
 const GITHUB_API = 'https://api.github.com';
 
-// Secret client is created at module load; secret access happens inside the handler
 const secretClient = new SecretManagerServiceClient();
 const secretName = "projects/378480993455/secrets/gemini-api/versions/latest";
 
@@ -26,51 +25,68 @@ function extractZip(zipPath) {
 function collectImportantFiles(baseDir) {
     const importantFiles = [];
     const filePatterns = [
-        "README", "package.json", "requirements.txt", "Pipfile", "Cargo.toml", 
-        "composer.json", "pom.xml", "build.gradle", ".gitignore", "LICENSE",
-        ".github", "docs", "src", "lib", "app", "components", "tests", "test"
+        // docs & metadata
+        "readme", "readme.md", ".md", ".markdown", "license", "changelog", "contributing", "contributing.md",
+        "code_of_conduct", "code_of_conduct.md",
+
+        // node / js ecosystem
+        "package.json", "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "pnpm-lock.yml", "webpack.config", "rollup.config", "vite.config", "babel.config", ".babelrc", ".eslintrc", "tsconfig.json", "jsconfig.json", ".prettierrc", "prettier.config", "jest.config", "babel.config.json",
+
+        // docker / infra
+        "dockerfile", "docker-compose.yml", ".dockerignore", "procfile", "vagrantfile",
+
+        // ci / tooling
+        ".github", ".github/workflows", ".gitlab-ci.yml", ".travis.yml", "circle.yml", ".circleci", "azure-pipelines.yml",
+
+        // build systems & package managers
+        "pom.xml", "build.gradle", "gradle.properties", "gradlew", "gradlew.bat", "go.mod", "go.sum", "cargo.toml", "cargo.lock", "composer.json",
+
+        // python
+        "requirements.txt", "pipfile", "pipfile.lock", "setup.py", "setup.cfg", "pyproject.toml", "manage.py",
+
+        // ruby
+        "gemfile", "gemfile.lock", "rakefile",
+
+        // common web / frontend files
+        ".html", ".htm", "index.html", ".css", ".scss", ".less", ".svelte", ".vue",
+
+        // source file extensions (many languages)
+        ".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs",
+        ".py", ".java", ".kt", ".kts", ".swift", ".rb", ".php", ".go", ".rs", ".c", ".cpp", ".h", ".hpp", ".m", ".mm",
+
+        // scripts / shells
+        ".sh", ".bash", ".zsh", ".ps1", ".bat",
+
+        // common entry filenames
+        "index", "index.js", "index.ts", "index.jsx", "index.tsx", "main", "main.go", "main.rs", "app", "server", "cli", "handler",
+
+        // tests / specs
+        "test", ".spec", ".test", "spec",
+
+        // other common config / manifests
+        ".gitignore", ".gitattributes", "manifest", "androidmanifest.xml", "androidmanifest.xml", "pom", ".env", ".env.example", ".env.sample",
+
+        // fallback textual formats
+        ".txt", ".rst", ".toml", ".yml", ".yaml", ".xml", ".json"
     ];
 
-    function walk(dir, depth = 0) {
-        // Limit depth to avoid infinite recursion and focus on important files
-        if (depth > 5) return;
-        
-        try {
-            for (const item of fs.readdirSync(dir)) {
-                const fullPath = path.join(dir, item);
-                const stat = fs.statSync(fullPath);
-                
-                if (stat.isDirectory()) {
-                    // Include important directories and their contents
-                    if (filePatterns.some(p => item.toLowerCase().includes(p.toLowerCase()))) {
-                        walk(fullPath, depth + 1);
-                    }
-                } else {
-                    // Include important files
-                    const fileExt = path.extname(item).toLowerCase();
-                    const fileName = item.toLowerCase();
-                    
-                    if (filePatterns.some(p => fileName.includes(p.toLowerCase())) ||
-                        ['.js', '.ts', '.py', '.java', '.cpp', '.c', '.cs', '.php', '.rb', '.go', '.rs', '.swift', '.kt', '.scala', '.html', '.css', '.scss', '.sass', '.less', '.json', '.yaml', '.yml', '.xml', '.md', '.txt', '.sh', '.bat', '.ps1'].includes(fileExt)) {
-                        
-                        if (fs.statSync(fullPath).size < 100_000) { // limit file size
-                            const content = fs.readFileSync(fullPath, "utf8");
-                            importantFiles.push({ 
-                                name: item, 
-                                path: fullPath.replace(baseDir, ''), 
-                                content: content.slice(0, 2000) // Limit content size
-                            });
-                        }
-                    }
+    function walk(dir) {
+        for (const item of fs.readdirSync(dir)) {
+            const fullPath = path.join(dir, item);
+            const stat = fs.statSync(fullPath);
+            if (stat.isDirectory()) {
+                walk(fullPath);
+            } else if (filePatterns.some(p => item.toLowerCase().includes(p))) {
+                if (fs.statSync(fullPath).size < 200_000) { // limit file size
+                    const content = fs.readFileSync(fullPath, "utf8");
+                    importantFiles.push({ name: item, path: fullPath, content });
                 }
             }
-        } catch (err) {
-            logger.warn(`Error reading directory ${dir}:`, err.message);
         }
     }
 
     walk(baseDir);
-    logger.info(`Collected ${importantFiles.length} important files for checklist analysis`);
+    logger.info(`Collected ${importantFiles.length} important files`);
     return importantFiles;
 }
 
@@ -96,7 +112,7 @@ function analyzeRepoStructure(baseDir) {
     };
 
     function analyzeDir(dir, depth = 0) {
-        if (depth > 3) return; // Limit depth
+        if (depth > 3) return; 
         
         try {
             const items = fs.readdirSync(dir);
@@ -107,7 +123,6 @@ function analyzeRepoStructure(baseDir) {
                 if (stat.isDirectory()) {
                     structure.directoryCount++;
                     
-                    // Check for important directories
                     const dirName = item.toLowerCase();
                     if (dirName.includes('test') || dirName.includes('spec')) {
                         structure.hasTests = true;
@@ -117,13 +132,11 @@ function analyzeRepoStructure(baseDir) {
                     }
                     if (dirName === '.github') {
                         structure.hasCI = true;
-                        // Check for templates
                         try {
                             const githubItems = fs.readdirSync(fullPath);
                             structure.hasIssuesTemplate = githubItems.some(f => f.includes('issue'));
                             structure.hasPRTemplate = githubItems.some(f => f.includes('pull_request'));
                         } catch (e) {
-                            // Ignore errors
                         }
                     }
                     
@@ -131,7 +144,6 @@ function analyzeRepoStructure(baseDir) {
                 } else {
                     structure.fileCount++;
                     
-                    // Check for important files
                     const fileName = item.toLowerCase();
                     const fileExt = path.extname(item).toLowerCase();
                     
@@ -142,7 +154,6 @@ function analyzeRepoStructure(baseDir) {
                     if (fileName.includes('code_of_conduct')) structure.hasCodeOfConduct = true;
                     if (fileName.includes('security')) structure.hasSecurityPolicy = true;
                     
-                    // Detect languages and frameworks
                     if (fileExt === '.js' || fileExt === '.ts') {
                         structure.languages.add('JavaScript/TypeScript');
                     } else if (fileExt === '.py') {
@@ -226,7 +237,7 @@ Key Files Content:
 ${fileContents}
 
 Create a concise, actionable improvement checklist for this repository.
-Organize the list into categories (if they apply):
+Here are POSSIBLE categories you can choose from:
 
 Documentation
 
@@ -238,14 +249,14 @@ Community
 
 Performance
 
-For each item, include:
+You should only provide 5 items that cover the most pressing issues.
 
-A short description of what to improve
+Each item should have just a short 1-2 sentence description of what to improve.
 
 Priority (High/Medium/Low)
 
 Keep the checklist short, clear, and specific to this repositorys language and purpose.
-Output the result as a markdown checklist that can be used to track progress.
+Output the result as a markdown checklist that can be used to track progress. EACH CHECKBOX SHOULD BE EMPTY FROM THE START.
 `;
 
     const response = await ai.models.generateContent({
@@ -260,7 +271,6 @@ Output the result as a markdown checklist that can be used to track progress.
 export const generateChecklist = onRequest(async (req, res) => {
     logger.info('generateChecklist started', { method: req.method, path: req.path });
 
-    // Construct AI client inside handler
     let ai;
     try {
         const [accessResponse] = await secretClient.accessSecretVersion({ name: secretName });
@@ -272,7 +282,6 @@ export const generateChecklist = onRequest(async (req, res) => {
         return;
     }
 
-    // Handle CORS
     if (req.method === 'OPTIONS') {
         res.set('Access-Control-Allow-Origin', '*');
         res.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -294,7 +303,6 @@ export const generateChecklist = onRequest(async (req, res) => {
             return;
         }
 
-        // Get repository information from GitHub API
         const repoApiUrl = `${GITHUB_API}/repos/${owner}/${repo}`;
         logger.info(`Fetching repo info from: ${repoApiUrl}`);
         
@@ -317,7 +325,6 @@ export const generateChecklist = onRequest(async (req, res) => {
         const repoInfo = await repoRes.json();
         logger.info(`Repository info fetched: ${repoInfo.name}`);
 
-        // Download repository ZIP
         const zipApiUrl = `${GITHUB_API}/repos/${owner}/${repo}/zipball`;
         logger.info(`Requesting repo ZIP from: ${zipApiUrl}`);
         
@@ -338,25 +345,19 @@ export const generateChecklist = onRequest(async (req, res) => {
             return;
         }
 
-        // Write zip to temp file
         const tmpZipPath = path.join(os.tmpdir(), `repo-${Date.now()}.zip`);
         const zipBuffer = Buffer.from(await zipRes.arrayBuffer());
         fs.writeFileSync(tmpZipPath, zipBuffer);
         logger.info(`Repository ZIP downloaded to ${tmpZipPath}`);
 
-        // Extract ZIP
         const extractedDir = extractZip(tmpZipPath);
 
-        // Analyze repository structure
         const structure = analyzeRepoStructure(extractedDir);
 
-        // Collect important files
         const files = collectImportantFiles(extractedDir);
 
-        // Generate checklist with Gemini
         const checklist = await generateChecklistWithGemini(files, structure, repoInfo, ai);
 
-        // Clean up temp files
         try {
             fs.unlinkSync(tmpZipPath);
             fs.rmSync(extractedDir, { recursive: true, force: true });
@@ -364,7 +365,6 @@ export const generateChecklist = onRequest(async (req, res) => {
             logger.warn('Failed to clean up temp files:', cleanupErr.message);
         }
 
-        // Return response
         logger.info('generateChecklist finished successfully');
         res.set('Access-Control-Allow-Origin', '*');
         res.status(200).send({ 
