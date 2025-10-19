@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import ActionCard from './ActionCard';
 import ChecklistModal from './ChecklistModal';
-import { useAuth } from '../../../contexts/AuthContext';
 import ReadmePreviewModal from './ReadmePreviewModal';
 
 export default function ControlModal({ isOpen, onClose, repo }) {
@@ -344,4 +343,5 @@ export default function ControlModal({ isOpen, onClose, repo }) {
       />
     </div>
   );
+}
 }
