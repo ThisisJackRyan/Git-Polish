@@ -1,30 +1,6 @@
 'use client';
 
-import { useAuth } from "../contexts/AuthContext";
-import { useRouter } from "next/navigation";
-import { signInWithGitHub } from "../app/services/firebase";
-
 export default function FeaturesSection() {
-  const { setUser, setToken } = useAuth();
-  const router = useRouter();
-
-  const handleLogin = async () => {
-    try {
-      const { user, token } = await signInWithGitHub();
-
-      // Save user + token in context
-      setUser(user);
-      setToken(token);
-
-      // Optional: also save token in sessionStorage for page refresh
-      sessionStorage.setItem("githubToken", token);
-
-      // Redirect to dashboard
-      router.push("/dashboard");
-    } catch (err) {
-      console.error("GitHub sign-in failed:", err);
-    }
-  };
   const features = [
     {
       icon: (
@@ -32,54 +8,26 @@ export default function FeaturesSection() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
       ),
-      title: "README Cleanup",
-      description: "Automatically format and organize your README files with proper structure, badges, and documentation standards."
+      title: "README Generation",
+      description: "Automatically create professional README files with proper structure, badges, installation instructions, and usage examples tailored to your project."
     },
     {
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
         </svg>
       ),
-      title: "File Organization",
-      description: "Restructure your repository with intelligent file organization, proper folder hierarchy, and naming conventions."
+      title: "Repository Description",
+      description: "Generate compelling repository descriptions that accurately represent your project's purpose, features, and attract contributors and users."
     },
     {
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
         </svg>
       ),
-      title: "Code Quality",
-      description: "Enhance code quality with automated linting, formatting, and best practice implementations across your repository."
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-        </svg>
-      ),
-      title: "Automated Workflows",
-      description: "Set up CI/CD pipelines, automated testing, and deployment workflows to streamline your development process."
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      title: "Security Scanning",
-      description: "Automatically scan for security vulnerabilities, outdated dependencies, and potential security issues."
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      ),
-      title: "Performance Optimization",
-      description: "Optimize repository performance with automated bundle analysis, dependency optimization, and caching strategies."
+      title: "Checklist Creation",
+      description: "Create comprehensive checklists for repository improvements, including code quality checks, documentation updates, and best practice implementations."
     }
   ];
 
@@ -101,7 +49,7 @@ export default function FeaturesSection() {
         </div>
 
         {/* Features grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {features.map((feature, index) => (
             <div
               key={index}
@@ -130,9 +78,9 @@ export default function FeaturesSection() {
               Join thousands of developers who have already polished their GitHub repositories 
               and made their code shine.
             </p>
-            <button 
-              onClick={handleLogin}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-xl hover:shadow-2xl"
+            <a 
+              href="/repos/"
+              className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-xl hover:shadow-2xl"
             >
               <div className="flex items-center gap-3">
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -140,7 +88,7 @@ export default function FeaturesSection() {
                 </svg>
                 Start Polishing Now
               </div>
-            </button>
+            </a>
           </div>
         </div>
       </div>

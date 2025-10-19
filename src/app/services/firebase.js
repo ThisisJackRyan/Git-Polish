@@ -1,6 +1,6 @@
 // src/lib/firebase.js
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GithubAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GithubAuthProvider, signOut } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -25,6 +25,16 @@ export const signInWithGitHub = async () => {
     return { user, token };
   } catch (err) {
     console.error("GitHub login error:", err);
+    throw err;
+  }
+};
+
+export const signOutUser = async () => {
+  try {
+    await signOut(auth);
+    return true;
+  } catch (err) {
+    console.error("Sign out error:", err);
     throw err;
   }
 };
