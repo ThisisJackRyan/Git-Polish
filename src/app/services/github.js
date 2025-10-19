@@ -224,4 +224,237 @@ export const updateDescription = async(token, repo, owner, desc) => {
   }
 };
 
+export const createGithubIssue = async (token, owner, repo, title, body, labels = []) => {
+  if (!token) {
+    throw new Error('GitHub token is required');
+  }
+
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/issues`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `token ${token}`,
+          Accept: 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: title,
+          body: body,
+          labels: labels
+        })
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Failed to create issue (${res.status}): ${text}`);
+    }
+
+    const issue = await res.json();
+    return issue;
+
+  } catch (error) {
+    throw new Error(`Error creating issue: ${error.message}`);
+  }
+};
+
+export const convertChecklistToReadableFormat = async (checklistContent) => {
+  try {
+    const prompt = `You are given raw checklist content that needs to be converted into a well-structured, readable format for GitHub issue creation. 
+
+Please analyze the content and convert it into a clean, organized format with:
+1. Clear section headers (using # or ##)
+2. Well-formatted checklist items (using - [ ] format)
+3. Proper organization and grouping
+4. Remove any duplicates or irrelevant content
+5. Ensure each task is clear and actionable
+
+Raw checklist content:
+${checklistContent}
+
+Please respond with ONLY the formatted checklist content, no explanations or additional text. Use proper markdown formatting:
+
+# Section Name
+## Subsection (if needed)
+- [ ] Clear, actionable task description
+- [ ] Another task description
+
+Format it ready for parsing into GitHub issues.`;
+
+    const formattedContent = await queryGemini(prompt);
+    return formattedContent || checklistContent; // Fallback to original if AI fails
+  } catch (error) {
+    console.warn('Failed to format checklist with AI:', error.message);
+    return checklistContent; // Fallback to original content
+  }
+};
+
+export const enhanceTaskWithAI = async (task, section, subsection) => {
+  try {
+    const prompt = `You are given a task from a project checklist. Please enhance this task by:
+1. Providing a more detailed description
+2. Breaking it down into actionable steps
+3. Suggesting any potential challenges or considerations
+
+Task: "${task}"
+Section: "${section || 'General'}"
+Subsection: "${subsection || 'N/A'}"
+
+Please respond with a structured format:
+**Enhanced Description:**
+[Your enhanced description here]
+
+**Action Steps:**
+- [ ] Step 1
+- [ ] Step 2
+- [ ] Step 3
+
+**Considerations:**
+- Potential challenge or consideration
+- Another consideration if applicable
+
+Keep the response concise but helpful.`;
+
+    const enhancedContent = await queryGemini(prompt);
+    return enhancedContent || `**Task:** ${task}\n\nThis task needs to be completed as part of the project checklist.`;
+  } catch (error) {
+    console.warn('Failed to enhance task with AI:', error.message);
+    return `**Task:** ${task}\n\nThis task needs to be completed as part of the project checklist.`;
+  }
+};
+
+export const parseChecklistAndCreateIssues = async (token, owner, repo, checklistContent, enhanceWithAI = false) => {
+  if (!token) {
+    throw new Error('GitHub token is required');
+  }
+
+  try {
+    // First, use AI to convert the checklist into a readable, well-structured format
+    const formattedContent = await convertChecklistToReadableFormat(checklistContent);
+    
+    // Parse the formatted checklist content into individual tasks
+    const lines = formattedContent.split('\n').filter(line => line.trim());
+    const issues = [];
+    let currentSection = '';
+    let currentSubsection = '';
+    
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      
+      // Check if line is a main section header (starts with #)
+      if (trimmedLine.match(/^#+\s+/)) {
+        const headerLevel = trimmedLine.match(/^#+/)[0].length;
+        const headerText = trimmedLine.replace(/^#+\s*/, '');
+        
+        if (headerLevel <= 2) {
+          currentSection = headerText;
+          currentSubsection = '';
+        } else {
+          currentSubsection = headerText;
+        }
+        continue;
+      }
+      
+      // Check if line is a checklist item (starts with - [ ] or - [x])
+      if (trimmedLine.match(/^-\s*\[\s*[x\s]*\]\s*/)) {
+        const task = trimmedLine.replace(/^-\s*\[\s*[x\s]*\]\s*/, '').trim();
+        if (task) {
+          // Create meaningful title
+          let title = task;
+          if (currentSubsection) {
+            title = `[${currentSubsection}] ${task}`;
+          } else if (currentSection) {
+            title = `[${currentSection}] ${task}`;
+          }
+          
+          // Create detailed body with context
+          let body;
+          if (enhanceWithAI) {
+            body = await enhanceTaskWithAI(task, currentSection, currentSubsection);
+          } else {
+            body = `This task is part of the project checklist and needs to be completed.\n\n`;
+            body += `**Task:** ${task}\n\n`;
+            
+            if (currentSection) {
+              body += `**Section:** ${currentSection}\n`;
+            }
+            if (currentSubsection) {
+              body += `**Subsection:** ${currentSubsection}\n`;
+            }
+            
+            body += `\n**Instructions:**\n`;
+            body += `- [ ] Review the task requirements\n`;
+            body += `- [ ] Implement the necessary changes\n`;
+            body += `- [ ] Test the implementation\n`;
+            body += `- [ ] Update documentation if needed\n`;
+            body += `- [ ] Mark this issue as complete\n\n`;
+            body += `*This issue was automatically generated from the project checklist.*`;
+          }
+          
+          // Determine labels based on content
+          const labels = ['checklist', 'task'];
+          
+          // Add context-based labels
+          if (currentSection) {
+            labels.push(currentSection.toLowerCase().replace(/[^a-z0-9]/g, '-'));
+          }
+          
+          // Add priority/type labels based on keywords
+          const taskLower = task.toLowerCase();
+          if (taskLower.includes('bug') || taskLower.includes('fix')) {
+            labels.push('bug');
+          } else if (taskLower.includes('feature') || taskLower.includes('add')) {
+            labels.push('enhancement');
+          } else if (taskLower.includes('doc') || taskLower.includes('readme')) {
+            labels.push('documentation');
+          } else if (taskLower.includes('test')) {
+            labels.push('testing');
+          }
+          
+          issues.push({
+            title: title.length > 100 ? title.substring(0, 97) + '...' : title,
+            body: body,
+            labels: labels
+          });
+        }
+      }
+    }
+    
+    if (issues.length === 0) {
+      throw new Error('No checklist items found in the provided content');
+    }
+    
+    // Create issues in GitHub with rate limiting
+    const createdIssues = [];
+    const failedIssues = [];
+    
+    for (let i = 0; i < issues.length; i++) {
+      const issue = issues[i];
+      try {
+        const createdIssue = await createGithubIssue(token, owner, repo, issue.title, issue.body, issue.labels);
+        createdIssues.push(createdIssue);
+        
+        // Add small delay to avoid rate limiting
+        if (i < issues.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      } catch (error) {
+        console.error(`Failed to create issue "${issue.title}":`, error.message);
+        failedIssues.push({ issue, error: error.message });
+      }
+    }
+    
+    return {
+      created: createdIssues,
+      failed: failedIssues,
+      total: issues.length
+    };
+
+  } catch (error) {
+    throw new Error(`Error parsing checklist and creating issues: ${error.message}`);
+  }
+};
+
 

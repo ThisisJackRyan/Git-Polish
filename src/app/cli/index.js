@@ -7,6 +7,7 @@ import { listCommand } from './commands/listCommand.js';
 import { readmeCommand } from './commands/readmeCommand.js';
 import { checklistCommand } from './commands/checklistCommand.js';
 import { descriptionCommand } from './commands/descriptionCommand.js';
+import { issuesCommand } from './commands/issuesCommand.js';
 import { geminiCommand } from './commands/utilityCommands.js';
 
 const program = new Command();
@@ -47,6 +48,11 @@ program
   .command('description')
   .description('Update repository description based on README')
   .action(descriptionCommand);
+
+program
+  .command('issues')
+  .description('Create GitHub issues from a checklist file')
+  .action(issuesCommand);
 
 // Utility commands
 program
