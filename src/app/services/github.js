@@ -115,8 +115,6 @@ export const getUpdatedDescriptionBasedOnReadMe = async(token, repo, owner) => {
     // decode base64 README content to string
     const readmetext = Buffer.from(data.content, 'base64').toString('utf8')
 
-    console.log(prompt + readmetext);
-
     return await queryGemini(prompt + readmetext);
   } catch (error) {
     throw new Error(`Error fetching readme: ${error.message}`);

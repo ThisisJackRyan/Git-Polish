@@ -1,12 +1,12 @@
 #!/usr/bin/env node --trace-warnings
 import 'dotenv/config';
 import { Command } from 'commander';
-import { updateDescription } from '../services/github.js';
 import { loadToken } from './tokenManager.js';
 import { loginCommand, logoutCommand } from './commands/authCommands.js';
 import { listCommand } from './commands/listCommand.js';
 import { readmeCommand } from './commands/readmeCommand.js';
 import { checklistCommand } from './commands/checklistCommand.js';
+import { descriptionCommand } from './commands/descriptionCommand.js';
 import { geminiCommand } from './commands/utilityCommands.js';
 
 const program = new Command();
@@ -42,6 +42,11 @@ program
   .command('checklist')
   .description('Generate a checklist for your repository')
   .action(checklistCommand);
+
+program
+  .command('description')
+  .description('Update repository description based on README')
+  .action(descriptionCommand);
 
 // Utility commands
 program
