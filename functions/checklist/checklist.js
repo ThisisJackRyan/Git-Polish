@@ -200,63 +200,52 @@ Repository Structure Analysis:
     const fileContents = files.slice(0, 20).map(f => `### ${f.path}\n${f.content}`).join("\n\n");
 
     const prompt = `
-You are analyzing a GitHub repository to create a comprehensive improvement checklist.
+You are reviewing a GitHub repository to suggest key improvements.
 
-Repository Information:
-- Name: ${repoInfo.name}
-- Description: ${repoInfo.description || 'No description provided'}
-- Language: ${repoInfo.language || 'Unknown'}
-- Stars: ${repoInfo.stargazers_count || 0}
-- Forks: ${repoInfo.forks_count || 0}
-- Size: ${repoInfo.size || 0} KB
-- Created: ${repoInfo.created_at || 'Unknown'}
-- Updated: ${repoInfo.updated_at || 'Unknown'}
+Repository Info:
+
+Name: ${repoInfo.name}
+
+Description: ${repoInfo.description || 'No description provided'}
+
+Language: ${repoInfo.language || 'Unknown'}
+
+Stars: ${repoInfo.stargazers_count || 0}
+
+Forks: ${repoInfo.forks_count || 0}
+
+Size: ${repoInfo.size || 0} KB
+
+Created: ${repoInfo.created_at || 'Unknown'}
+
+Updated: ${repoInfo.updated_at || 'Unknown'}
 
 ${structureInfo}
 
 Key Files Content:
 ${fileContents}
 
-Create a comprehensive, actionable checklist for improving this repository. The checklist should be organized into categories and include specific, actionable items. Focus on:
+Create a concise, actionable improvement checklist for this repository.
+Organize the list into categories (if they apply):
 
-1. **Documentation & Communication**
-   - README quality and completeness
-   - Code documentation
-   - Contributing guidelines
-   - Issue and PR templates
+Documentation
 
-2. **Code Quality & Standards**
-   - Code organization and structure
-   - Linting and formatting
-   - Testing coverage
-   - Code review processes
+Code Quality
 
-3. **Project Management**
-   - License and legal compliance
-   - Security considerations
-   - CI/CD pipeline
-   - Dependency management
+Project Management
 
-4. **Community & Maintenance**
-   - Issue management
-   - Release management
-   - Community guidelines
-   - Maintenance practices
+Community
 
-5. **Performance & Optimization**
-   - Performance considerations
-   - Resource optimization
-   - Monitoring and logging
+Performance
 
-For each item, provide:
-- A clear, actionable description
-- Priority level (High/Medium/Low)
-- Brief explanation of why it's important
-- Suggested implementation approach
+For each item, include:
 
-Format the response as a well-structured markdown checklist with checkboxes that can be used to track progress.
+A short description of what to improve
 
-Make the checklist specific to this repository's technology stack, size, and apparent purpose. Prioritize items that would have the most impact for this particular repository.
+Priority (High/Medium/Low)
+
+Keep the checklist short, clear, and specific to this repositorys language and purpose.
+Output the result as a markdown checklist that can be used to track progress.
 `;
 
     const response = await ai.models.generateContent({
