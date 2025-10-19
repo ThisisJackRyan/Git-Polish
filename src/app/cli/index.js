@@ -3,7 +3,7 @@ import 'dotenv/config';
 import { Command } from 'commander';
 import geminiExample from '../api/gemini.js';
 import { signInWithGitHubViaCLI } from '../services/firebase.js';
-import { fetchGithubRepos } from '../services/github.js';
+import { fetchGithubRepos, generateRepoData } from '../services/github.js';
 import { saveToken, loadToken, clearToken, getTokenFilePath } from './tokenManager.js';
 import { displayRepositoriesInteractively } from './displayUtils.js';
 
@@ -28,7 +28,6 @@ program
   .action(async () => {
     const token = await loadToken();
     if (!token) {
-      console.log('❌ No token found. Please run "git-polish login" first.');
       return;
     }
     
@@ -55,6 +54,17 @@ program
     await clearToken();
     console.log('✅ Successfully logged out');
   });
+
+program
+  .command('readme')
+  .description(`Polish a repo's README`)
+  .action(async () => {
+    const token = await loadToken();
+    if (!token) {
+      return;
+    }
+    generateRepoData(token, "FactorioProductionCalculator", "CEOFYEAST")
+  })
 
 program
   .command('gemini')

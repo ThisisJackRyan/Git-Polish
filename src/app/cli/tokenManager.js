@@ -10,8 +10,14 @@ export const saveToken = async (token) => {
 
 export const loadToken = async () => {
   try {
-    return await fs.readFile(TOKEN_FILE, 'utf8');
+    const token = await fs.readFile(TOKEN_FILE, 'utf8');
+    if (!token) { 
+      console.log('❌ No token found. Please run "git-polish login" first.');
+      return null;
+    } 
+    return token;
   } catch (error) {
+    console.log('❌ Error occurred when loading token. Please run "git-polish login" first.');
     return null;
   }
 };
