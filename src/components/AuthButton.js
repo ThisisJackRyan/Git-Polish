@@ -1,10 +1,10 @@
 "use client";
 import { useAuth } from "../contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { signInWithGitHub } from "../app/services/firebase";
+import { signInWithGitHub, signOutUser } from "../app/services/firebase";
 
 export default function AuthButton() {
-  const { setUser, setToken } = useAuth();
+  const { user, setUser, setToken, signOut, mounted } = useAuth();
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -15,16 +15,46 @@ export default function AuthButton() {
       setUser(user);
       setToken(token);
 
-      // Optional: also save token in sessionStorage for page refresh
+      // Save token and user in sessionStorage for page refresh
       sessionStorage.setItem("githubToken", token);
+      sessionStorage.setItem("githubUser", JSON.stringify(user));
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      router.push("/repos");
     } catch (err) {
       console.error("GitHub sign-in failed:", err);
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOutUser();
+      signOut();
+      router.push("/");
+    } catch (err) {
+      console.error("Sign out failed:", err);
+    }
+  };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className="w-32 h-10 rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+    );
+  }
+
+  // If user is signed in, show sign out button
+  if (user) {
+    return (
+      <button
+        onClick={handleSignOut}
+        className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200 border border-gray-300 dark:border-gray-600"
+      >
+        Sign Out
+      </button>
+    );
+  }
+
+  // If user is not signed in, show sign in button
   return (
     <button
       onClick={handleLogin}

@@ -8,22 +8,45 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Check for existing token in sessionStorage on mount
+    // Check for existing token and user in sessionStorage on mount
     const savedToken = sessionStorage.getItem('githubToken');
+    const savedUser = sessionStorage.getItem('githubUser');
+    
     if (savedToken) {
       setToken(savedToken);
     }
+    
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.error('Error parsing saved user data:', error);
+        sessionStorage.removeItem('githubUser');
+      }
+    }
+    
     setLoading(false);
+    setMounted(true);
   }, []);
+
+  const signOut = () => {
+    setUser(null);
+    setToken(null);
+    sessionStorage.removeItem('githubToken');
+    sessionStorage.removeItem('githubUser');
+  };
 
   const value = {
     user,
     setUser,
     token,
     setToken,
-    loading
+    loading,
+    mounted,
+    signOut
   };
 
   return (

@@ -1,30 +1,6 @@
 'use client';
 
-import { useAuth } from "../contexts/AuthContext";
-import { useRouter } from "next/navigation";
-import { signInWithGitHub } from "../app/services/firebase";
-
 export default function HeroSection() {
-  const { setUser, setToken } = useAuth();
-  const router = useRouter();
-
-  const handleLogin = async () => {
-    try {
-      const { user, token } = await signInWithGitHub();
-
-      // Save user + token in context
-      setUser(user);
-      setToken(token);
-
-      // Optional: also save token in sessionStorage for page refresh
-      sessionStorage.setItem("githubToken", token);
-
-      // Redirect to dashboard
-      router.push("/dashboard");
-    } catch (err) {
-      console.error("GitHub sign-in failed:", err);
-    }
-  };
   return (
     <section className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen flex items-center">
       {/* Background decoration */}
@@ -51,8 +27,8 @@ export default function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <button 
-              onClick={handleLogin}
+            <a 
+              href="/repos/"
               className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-xl hover:shadow-2xl"
             >
               <div className="flex items-center gap-3">
@@ -61,33 +37,47 @@ export default function HeroSection() {
                 </svg>
                 Get Started Free
               </div>
-            </button>
+            </a>
             
             <button className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-xl font-semibold text-lg hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200">
               Watch Demo
             </button>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          {/* Key Benefits */}
+          <div className="grid grid-cols-1 mt-16 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">10K+</div>
-              <div className="text-gray-600 dark:text-gray-400">Repositories Polished</div>
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white mx-auto mb-4">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Lightning Fast</div>
+              <div className="text-gray-600 dark:text-gray-400">AI-powered analysis and generation in seconds</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">50K+</div>
-              <div className="text-gray-600 dark:text-gray-400">Happy Developers</div>
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white mx-auto mb-4">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <div className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Secure & Private</div>
+              <div className="text-gray-600 dark:text-gray-400">Your code stays private with GitHub OAuth</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">99.9%</div>
-              <div className="text-gray-600 dark:text-gray-400">Uptime Guarantee</div>
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white mx-auto mb-4">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="text-xl font-semibold text-gray-900 dark:text-white mb-2">CLI Ready</div>
+              <div className="text-gray-600 dark:text-gray-400">Command-line tools for automation</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div className="absolute w-full flex justify-center bottom-8 transform animate-bounce">
         <svg className="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
         </svg>
