@@ -1,15 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import ActionCard from './ActionCard';
 import ChecklistModal from './ChecklistModal';
 import { useAuth } from '../../../contexts/AuthContext';
+import ReadmePreviewModal from './ReadmePreviewModal';
 
 export default function ControlModal({ isOpen, onClose, repo }) {
   const [selectedAction, setSelectedAction] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [checklistData, setChecklistData] = useState(null);
   const [showChecklistModal, setShowChecklistModal] = useState(false);
+  const [error, setError] = useState(null);
+  const [readmeContent, setReadmeContent] = useState('');
+  const [showReadmePreview, setShowReadmePreview] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
   const { token } = useAuth();
 
   if (!isOpen) return null;
@@ -93,9 +99,21 @@ export default function ControlModal({ isOpen, onClose, repo }) {
     setSelectedAction(actionId);
   };
 
+  async function callGenerateReadme() {
+    const response = await fetch(`/api/github/repos/${repo.name}/readme?token=${token}&owner=${repo.owner.login}`);
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || `Failed to generate README: ${response.statusText}`);
+    }
+    const data = await response.json();
+    // Prefer summary or full data depending on backend
+    const content = data?.summary || data?.data?.summary || JSON.stringify(data, null, 2);
+    return content;
+  }
+
   const handleExecute = async () => {
     if (!selectedAction) return;
-    
+
     setIsProcessing(true);
     
     try {
@@ -136,6 +154,22 @@ export default function ControlModal({ isOpen, onClose, repo }) {
     } finally {
       setIsProcessing(false);
       onClose();
+    setError(null);
+
+    try {
+      if (selectedAction === 'readme') {
+        const content = await callGenerateReadme();
+        setReadmeContent(content);
+        setShowReadmePreview(true);
+      } else {
+        // TODO: Implement other actions
+        console.log(`Executing ${selectedAction} for repo:`, repo.name);
+      }
+    } catch (err) {
+      console.error('Error executing action:', err);
+      setError(err.message);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -150,6 +184,46 @@ export default function ControlModal({ isOpen, onClose, repo }) {
   const handleChecklistModalClose = () => {
     setShowChecklistModal(false);
     setChecklistData(null);
+    setError(null);
+    onClose();
+  };
+
+  const handleAcceptReadme = async () => {
+
+    const resp = await fetch(`/api/github/repos/${repo.name}/readme?token=${token}&owner=${repo.owner.login}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        message: "Update ReadMe via Git Polish",
+        content: btoa(readmeContent),
+      }),
+    })
+    if(resp.ok){
+      alert("It worked ")
+    }
+    else{
+      console.log(resp)
+      alert("it did not")
+    }
+    // Placeholder: in future, commit README to repo or open PR
+    // setShowReadmePreview(false);
+    // onClose();
+  };
+
+  const handleDeclineReadme = () => {
+    setShowReadmePreview(false);
+  };
+
+  const handleRegenerateReadme = async () => {
+    setRegenerating(true);
+    try {
+      const content = await callGenerateReadme();
+      setReadmeContent(content);
+    } catch (e) {
+      console.error(e);
+      setError(e.message);
+    } finally {
+      setRegenerating(false);
+    }
   };
 
   return (
@@ -201,6 +275,11 @@ export default function ControlModal({ isOpen, onClose, repo }) {
 
           {/* Footer */}
           <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+            {error && (
+              <div className="mb-3 p-3 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg">
+                <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+              </div>
+            )}
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 {selectedAction ? (
@@ -252,6 +331,17 @@ export default function ControlModal({ isOpen, onClose, repo }) {
           analysis={checklistData.analysis}
         />
       )}
+      <ReadmePreviewModal
+        isOpen={showReadmePreview}
+        onClose={() => setShowReadmePreview(false)}
+        content={readmeContent}
+        repoName={repo?.name}
+        repoOwner={repo?.owner?.login}
+        onAccept={handleAcceptReadme}
+        onDecline={handleDeclineReadme}
+        onRegenerate={handleRegenerateReadme}
+        regenerating={regenerating}
+      />
     </div>
   );
 }
