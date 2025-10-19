@@ -182,3 +182,6 @@ export const readmeGen = onRequest(async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 });
+
+// Export the checklist function
+export { generateChecklist } from './checklist.js';

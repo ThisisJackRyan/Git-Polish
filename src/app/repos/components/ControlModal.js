@@ -2,10 +2,15 @@
 
 import { useState } from 'react';
 import ActionCard from './ActionCard';
+import ChecklistModal from './ChecklistModal';
+import { useAuth } from '../../../contexts/AuthContext';
 
 export default function ControlModal({ isOpen, onClose, repo }) {
   const [selectedAction, setSelectedAction] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [checklistData, setChecklistData] = useState(null);
+  const [showChecklistModal, setShowChecklistModal] = useState(false);
+  const { token } = useAuth();
 
   if (!isOpen) return null;
 
@@ -59,12 +64,12 @@ export default function ControlModal({ isOpen, onClose, repo }) {
       hoverColor: 'hover:from-orange-600 hover:to-orange-700'
     },
     {
-      id: 'license',
-      title: 'Add License',
-      description: 'Add an appropriate open source license to your repository',
+      id: 'checklist',
+      title: 'Improvement Checklist',
+      description: 'Generate a high-level checklist to systematically improve your repository',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
         </svg>
       ),
       color: 'from-indigo-500 to-indigo-600',
@@ -88,24 +93,63 @@ export default function ControlModal({ isOpen, onClose, repo }) {
     setSelectedAction(actionId);
   };
 
-  const handleExecute = () => {
+  const handleExecute = async () => {
     if (!selectedAction) return;
     
     setIsProcessing(true);
-    // TODO: Implement API call here
-    console.log(`Executing ${selectedAction} for repo:`, repo.name);
     
-    // Simulate processing
-    setTimeout(() => {
+    try {
+      if (selectedAction === 'checklist') {
+        // Call the checklist generation API
+        const response = await fetch('/api/checklist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            githubtoken: token,
+            repo: repo.name,
+            owner: repo.owner.login
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to generate checklist: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log('Generated checklist:', data);
+        
+        // Store the checklist data and show the modal
+        setChecklistData(data);
+        setShowChecklistModal(true);
+      } else {
+        // Handle other actions (existing logic)
+        console.log(`Executing ${selectedAction} for repo:`, repo.name);
+        
+        // Simulate processing for other actions
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    } catch (error) {
+      console.error('Error executing action:', error);
+      alert(`Error: ${error.message}`);
+    } finally {
       setIsProcessing(false);
       onClose();
-    }, 2000);
+    }
   };
 
   const handleClose = () => {
     setSelectedAction(null);
     setIsProcessing(false);
+    setChecklistData(null);
+    setShowChecklistModal(false);
     onClose();
+  };
+
+  const handleChecklistModalClose = () => {
+    setShowChecklistModal(false);
+    setChecklistData(null);
   };
 
   return (
@@ -197,6 +241,17 @@ export default function ControlModal({ isOpen, onClose, repo }) {
           </div>
         </div>
       </div>
+
+      {/* Checklist Modal */}
+      {checklistData && (
+        <ChecklistModal
+          isOpen={showChecklistModal}
+          onClose={handleChecklistModalClose}
+          checklist={checklistData.checklist}
+          repository={checklistData.repository}
+          analysis={checklistData.analysis}
+        />
+      )}
     </div>
   );
 }
