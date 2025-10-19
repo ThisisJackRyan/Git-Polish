@@ -1,3 +1,4 @@
+import queryGemini from "../api/gemini.js";
 
 export const fetchGithubRepos = async (token, page=null, perPage=null) => {
   if (!token) {
@@ -86,4 +87,70 @@ export const generateRepoData = async (token, repo, owner) => {
   }
 }
 
+export const getUpdatedDescriptionBasedOnReadMe = async(token, repo, owner) => {
+  if (!token) {
+    throw new Error('GitHub token is required');
+  }
+
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/readme`,
+      {
+        headers: {
+          Authorization: `token ${token}`,
+          Accept: 'application/vnd.github+json',
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Failed to fetch readme (${res.status}): ${text}`);
+    }
+
+    const data = await res.json(); // parse JSON body
+
+    const prompt = "You are fed a README.md file below. You are to summarize the README in 2 sentences max. This is for the description of a GitHub repository.\n\n";
+  
+    // decode base64 README content to string
+    const readmetext = Buffer.from(data.content, 'base64').toString('utf8')
+
+    console.log(prompt + readmetext);
+
+    return await queryGemini(prompt + readmetext);
+  } catch (error) {
+    throw new Error(`Error fetching readme: ${error.message}`);
+  }
+}
+
+export const updateDescription = async(token, repo, owner, desc) => {
+  if (!token) {
+    throw new Error('GitHub token is required');
+  }
+
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}`,
+      {
+      method: 'PATCH',
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ description: desc })
+      }
+    );
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Failed update description (${res.status}): ${text}`);
+    }
+
+    return res;
+
+  } catch(error) {
+    throw new Error(`Error pushing description: ${error.message}`);
+  }
+}
 

@@ -13,23 +13,6 @@ const GITHUB_API = 'https://api.github.com';
 const secretClient = new SecretManagerServiceClient();
 const secretName = "projects/378480993455/secrets/gemini-api/versions/latest";
 
-// --- Helper: Download ZIP from GitHub ---
-/*
-async function downloadRepoZip(repoUrl, destPath) {
-    const zipUrl = repoUrl.endsWith(".zip") ? repoUrl : `${repoUrl}/archive/refs/heads/main.zip`;
-
-    logger.info(`Downloading repo ZIP from: ${zipUrl}`);
-    const response = await fetch(zipUrl);
-
-    if (!response.ok) throw new Error(`Failed to fetch repo ZIP: ${response.statusText}`);
-    const buffer = await response.arrayBuffer();
-    fs.writeFileSync(destPath, Buffer.from(buffer));
-
-    logger.info(`Repo ZIP saved to: ${destPath}`);
-    return destPath;
-}
-    */
-
 // --- Helper: Extract ZIP to temporary folder ---
 function extractZip(zipPath) {
     const extractDir = fs.mkdtempSync(path.join(os.tmpdir(), "repo-"));
@@ -42,7 +25,7 @@ function extractZip(zipPath) {
 // --- Helper: Collect key files for analysis ---
 function collectImportantFiles(baseDir) {
     const importantFiles = [];
-    const filePatterns = ["README", "package.json", ".py", ".js", ".ts", ".html"];
+    const filePatterns = ["README", "package.json", ".py", ".js", ".ts", ".html", "index", ".c", ".cpp", "main", ];
 
     function walk(dir) {
         for (const item of fs.readdirSync(dir)) {

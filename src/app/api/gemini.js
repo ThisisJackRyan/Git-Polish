@@ -6,7 +6,7 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
 
-export default async function geminiExample() {
+export async function geminiExample() {
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: "Explain how AI works in a few words",
@@ -36,6 +36,14 @@ export async function regenReadMe(readmeContent, suggestionsText) {
     console.error('Error generating content:', error);
     throw new Error('Failed to regenerate README with Gemini');
   }
+}
+
+export default async function queryGemini(question) {
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: question,
+    });
+    return(response.text);
 }
 
 export async function getRepoData(owner, repo, token) {

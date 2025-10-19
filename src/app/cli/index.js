@@ -5,7 +5,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { regenReadMe } from '../api/gemini.js';
 import { signInWithGitHubViaCLI } from '../services/firebase.js';
-import { fetchGithubRepos, generateRepoData } from '../services/github.js';
+import { fetchGithubRepos, generateRepoData, getUpdatedDescriptionBasedOnReadMe, updateDescription } from '../services/github.js';
 import { saveToken, loadToken, clearToken, getTokenFilePath } from './tokenManager.js';
 import { displayRepositoriesInteractively, promptRepoDetails, promptReadmeDecision, promptRegenerationSuggestions, promptUserInput } from './displayUtils.js';
 
@@ -240,30 +240,49 @@ program
     .command('checklist <owner> <repo> <path>')
     .description('Fetch repo data for owner, repo and path')
     .action(async (owner, repo, token) => {
-        //try {
-            // ...existing code...
-          try {
-              const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/generateChecklist', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ githubtoken: token, repo: repo, owner: owner })
-              });
+        try {
+            const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/generateChecklist', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ githubtoken: token, repo: repo, owner: owner })
+            });
 
-              if (!res.ok) {
-                // prefer to inspect body on error
-                const text = await res.text();
-                throw new Error(`Request failed (${res.status}): ${text}`);
-              }
+            if (!res.ok) {
+              // prefer to inspect body on error
+              const text = await res.text();
+              throw new Error(`Request failed (${res.status}): ${text}`);
+            }
 
-              const data = await res.json(); // parse JSON body
-              console.log('CLI says:', data.checklist);
-          } catch (err) {
-              console.error('Fetch error:', err);
-          }
-          // ...existing code...
-        //} catch (err) {
-          //  console.error('Error fetching repo data:', err.message || err);
-            //process.exitCode = 1;
-        });
+            const data = await res.json(); // parse JSON body
+            console.log('CLI says:', data.checklist);
+        } catch (err) {
+            console.error('Fetch error:', err);
+        }
+      });
+
+program
+    .command('getreadme <owner> <repo> <path>')
+    .description('Fetch repo data for owner, repo and path')
+    .action(async (owner, repo, token) => {
+        try {
+            const res = await getUpdatedDescriptionBasedOnReadMe(token, repo, owner);
+            console.log('CLI says:', res);
+        } catch (err) {
+            console.error('Fetch error:', err);
+        }
+      });
+
+program
+    .command('updatedesc <owner> <repo> <path> <desc>')
+    .description('Fetch repo data for owner, repo and path')
+    .action(async (owner, repo, token, desc) => {
+        try {
+            const token = await loadToken();
+            const res = await updateDescription(token, repo, owner, desc);
+            console.log('CLI says:', res);
+        } catch (err) {
+            console.error('Fetch error:', err);
+        }
+      });
 
 program.parse();
