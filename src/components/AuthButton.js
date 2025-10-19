@@ -19,8 +19,7 @@ export default function AuthButton() {
       sessionStorage.setItem("githubToken", token);
       sessionStorage.setItem("githubUser", JSON.stringify(user));
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      router.push("/repos");
     } catch (err) {
       console.error("GitHub sign-in failed:", err);
     }

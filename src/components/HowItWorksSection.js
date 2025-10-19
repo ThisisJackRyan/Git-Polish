@@ -110,14 +110,14 @@ export default function HowItWorksSection() {
             {steps.map((step, index) => (
               <div
                 key={index}
-                className="relative group"
+                className="relative group min-h-full"
               >
                 {/* Connection line for desktop */}
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-16 left-full w-8 h-0.5 bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-700 dark:to-gray-700 transform translate-x-4 z-0"></div>
+                  <div className="hidden lg:block absolute top-16 left-full h-full bg-gradient-to-r from-gray-200 to-gray-200 dark:from-gray-700 dark:to-gray-700 transform translate-x-4 z-0"></div>
                 )}
                 
-                <div className="relative bg-white dark:bg-gray-900 p-8 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-xl dark:hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 z-10">
+                <div className="relative h-full bg-white dark:bg-gray-900 p-8 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-xl dark:hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 z-10">
                   {/* Step number */}
                   <div className="absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
                     {step.number}
