@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 import 'dotenv/config';
 import { Command } from 'commander';
-import { writeFile, mkdir } from 'fs/promises';
-import { join, dirname } from 'path';
+import { writeFile } from 'fs/promises';
+import { join } from 'path';
 import { regenReadMe } from '../api/gemini.js';
 import { signInWithGitHubViaCLI } from '../services/firebase.js';
 import { fetchGithubRepos, generateRepoData } from '../services/github.js';
 import { saveToken, loadToken, clearToken, getTokenFilePath } from './tokenManager.js';
-import { displayRepositoriesInteractively, promptRepoDetails, promptReadmeDecision, promptRegenerationSuggestions, promptUserInput } from './displayUtils.js';
+import { displayRepositoriesInteractively, promptRepoDetails, promptReadmeDecision, promptRegenerationSuggestions } from './displayUtils.js';
 
 const program = new Command();
 
@@ -64,6 +64,13 @@ const commitReadmeToRepository = async (token, owner, repo, readmeContent) => {
   console.log('✅ README successfully committed to repository!');
 };
 
+const regenerateReadmeWithSuggestions = async (token, owner, repo, originalReadme, suggestions) => {
+  console.log(`🔄 [PLACEHOLDER] Regenerating README with suggestions: "${suggestions}"`);
+  // TODO: Implement actual regeneration functionality
+  console.log('✅ README regenerated with your suggestions!');
+  return `${originalReadme}\n\n<!-- Updated with suggestions: ${suggestions} -->`;
+};
+
 program
   .command('readme')
   .description(`Polish a repo's README`)
@@ -82,7 +89,24 @@ program
         return;
       }
       
-      console.log(`\n🔄 Generating README data for ${owner}/${repo}...`);
+      // FOR TESTING: Use existing file instead of generating new one
+      const testFilepath = 'C:\\Users\\bento\\OneDrive\\Desktop\\Git-Polish\\CEOFYEAST-FactorioProductionCalculator-readme-2025-10-19T00-38-25-471Z.md';
+      
+      console.log(`\n� Using existing README file for testing: ${testFilepath}`);
+      
+      // Read content from existing file
+      let fileContent = '';
+      try {
+        fileContent = await readFile(testFilepath, 'utf8');
+        console.log('✅ Test file loaded successfully!');
+      } catch (error) {
+        console.log('❌ Failed to read test file:', error.message);
+        return;
+      }
+      
+      // ORIGINAL CODE (commented out for testing):
+      /*
+      console.log(`\n�🔄 Generating README data for ${owner}/${repo}...`);
       
       // Generate repo data
       let data = await generateRepoData(token, repo, owner);
@@ -93,7 +117,6 @@ program
       }
       
       // Extract content from data
-      let fileContent = '';
       if (typeof data === 'string') {
         fileContent = data;
       } else if (data.summary) {
@@ -102,40 +125,18 @@ program
         fileContent = JSON.stringify(data, null, 2);
       }
       
-      // Create filename without timestamp
-      const filename = `${owner}-${repo}-readme.md`;
-      
-      // Prompt for file location
-      console.log('\n📁 Where would you like to save the README file?');
-      console.log('1. Current directory (default)');
-      console.log('2. Custom location (relative to current directory)');
-      
-      const locationChoice = await promptUserInput('Enter your choice (1-2, default is 1): ');
-      
-      let filepath;
-      if (locationChoice.trim() === '2') {
-        const customPath = await promptUserInput('Enter relative path (e.g., "docs", "output/readmes"): ');
-        if (customPath.trim()) {
-          filepath = join(process.cwd(), customPath.trim(), filename);
-        } else {
-          filepath = join(process.cwd(), filename);
-        }
-      } else {
-        filepath = join(process.cwd(), filename);
-      }
+      // Create filename with timestamp
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const filename = `${owner}-${repo}-readme-${timestamp}.md`;
+      const filepath = join(process.cwd(), filename);
       
       // Write data to file
-      try {
-        // Create directory if it doesn't exist
-        await mkdir(dirname(filepath), { recursive: true });
-        await writeFile(filepath, fileContent, 'utf8');
-      } catch (error) {
-        console.log('❌ Failed to create directory or write file:', error.message);
-        return;
-      }
+      await writeFile(filepath, fileContent, 'utf8');
       
       console.log(`\n✅ README data generated successfully!`);
       console.log(`📁 File saved to: ${filepath}`);
+      */
+      
       console.log(`\n💡 Tip: Open the file in a markdown viewer to see the formatted content.`);
       
       // Decision tree
@@ -168,17 +169,10 @@ program
               console.log(`\n🔄 Regenerating README with your suggestions...`);
               const updatedContent = await regenReadMe(fileContent, suggestions);
               
-              // Update file content and overwrite the same file
+              // Update file content and write back to the test file
               fileContent = updatedContent;
-              
-              try {
-                // Create directory if it doesn't exist
-                await mkdir(dirname(filepath), { recursive: true });
-                await writeFile(filepath, fileContent, 'utf8');
-                console.log(`📁 Updated README saved to: ${filepath}`);
-              } catch (error) {
-                console.log('❌ Failed to write updated file:', error.message);
-              }
+              await writeFile(testFilepath, fileContent, 'utf8');
+              console.log(`📁 Updated README saved to: ${testFilepath}`);
               
             } catch (error) {
               console.log('❌ Failed to regenerate README:', error.message);
@@ -189,7 +183,7 @@ program
             // Discard
             console.log('\n🗑️  README generation discarded.');
             console.log('📝 Your existing README will remain unchanged.');
-            console.log(`📁 Generated file is still available at: ${filepath}`);
+            console.log(`📁 Test file is still available at: ${testFilepath}`);
             shouldContinue = false;
             break;
             
@@ -205,6 +199,10 @@ program
     }
   });
 
+// ...existing code...
+
+// ...existing code...
+
 program
   .command('gemini')
   .description('Default Gemini responce')
@@ -217,33 +215,10 @@ program
     .command('repodata <owner> <repo> <path>')
     .description('Fetch repo data for owner, repo and path')
     .action(async (owner, repo, token) => {
-        try {
-              const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/readmeGen', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ githubtoken: token, repo: repo, owner: owner })
-              });
-
-              if (!res.ok) {
-                const text = await res.text();
-                throw new Error(`Request failed (${res.status}): ${text}`);
-              }
-
-              const data = await res.json();
-              console.log('CLI says:', data.summary);
-          } catch (err) {
-              console.error('Fetch error:', err);
-          }
-        });
-
-program
-    .command('checklist <owner> <repo> <path>')
-    .description('Fetch repo data for owner, repo and path')
-    .action(async (owner, repo, token) => {
         //try {
             // ...existing code...
           try {
-              const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/generateChecklist', {
+              const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/readmeGen', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ githubtoken: token, repo: repo, owner: owner })
@@ -256,7 +231,7 @@ program
               }
 
               const data = await res.json(); // parse JSON body
-              console.log('CLI says:', data.checklist);
+              console.log('CLI says:', data.summary);
           } catch (err) {
               console.error('Fetch error:', err);
           }

@@ -115,3 +115,46 @@ export const displayRepositoriesInteractively = async (repos) => {
     rl.close();
   }
 };
+
+export const promptUserInput = (question) => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+};
+
+export const promptRepoDetails = async () => {
+  console.log('💡 Tip: You can use the "git-polish list" command to see your repositories and find the owner/repo names.');
+  console.log('');
+  
+  const owner = await promptUserInput('Enter the repository owner (username/organization): ');
+  const repo = await promptUserInput('Enter the repository name: ');
+  
+  return { owner, repo };
+};
+
+export const promptReadmeDecision = async () => {
+  console.log('\n📝 What would you like to do with the generated README?');
+  console.log('1. Accept and commit to repository');
+  console.log('2. Regenerate with suggestions');
+  console.log('3. Discard and keep existing README');
+  console.log('');
+  
+  const choice = await promptUserInput('Enter your choice (1-3): ');
+  return choice.trim();
+};
+
+export const promptRegenerationSuggestions = async () => {
+  console.log('\n💡 Please provide suggestions for improving the README:');
+  console.log('(e.g., "Add more technical details", "Make it more concise", "Include installation steps")');
+  
+  const suggestions = await promptUserInput('Your suggestions: ');
+  return suggestions.trim();
+};

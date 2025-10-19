@@ -14,6 +14,30 @@ export default async function geminiExample() {
     return(response.text);
 }
 
+export async function regenReadMe(readmeContent, suggestionsText) {
+  const prompt =
+    `Using the provided readme content and suggestions, update the ` +
+    `readme based on the suggestions; remember to maintain the markdown ` +
+    `format of the readme; it should be able to be displayed on GitHub. ` +
+    `Ensure that no evidence of your involvement in the modifications remains; ` +
+    `I don't want you to leave any text directly discussing the modifications themselves; ` +
+    `all I want is the newly-modified README content. \n` +
+    `suggestions text: ${suggestionsText} END SUGGESTIONS \n \n \n` +
+    `readme text: ${readmeContent} END README CONTENT`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+    
+    return response.text;
+  } catch (error) {
+    console.error('Error generating content:', error);
+    throw new Error('Failed to regenerate README with Gemini');
+  }
+}
+
 export async function getRepoData(owner, repo, token) {
     const headers = { Authorization: `token ${token}` };
 
