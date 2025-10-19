@@ -5,6 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import ActionCard from './ActionCard';
 import ChecklistModal from './ChecklistModal';
 import ReadmePreviewModal from './ReadmePreviewModal';
+import DescriptionModal from './DescriptionModal';
+
 
 export default function ControlModal({ isOpen, onClose, repo }) {
   const [selectedAction, setSelectedAction] = useState(null);
@@ -15,6 +17,8 @@ export default function ControlModal({ isOpen, onClose, repo }) {
   const [readmeContent, setReadmeContent] = useState('');
   const [showReadmePreview, setShowReadmePreview] = useState(false);
   const [regenerating, setRegenerating] = useState(false);
+  const [showDescriptionPreview, setShowDescriptionPreview] = useState(false)
+  const [description, setDescription] = useState('')
   const { token } = useAuth();
   if (!isOpen) return null;
 
@@ -32,40 +36,16 @@ export default function ControlModal({ isOpen, onClose, repo }) {
       hoverColor: 'hover:from-blue-600 hover:to-blue-700'
     },
     {
-      id: 'documentation',
-      title: 'Add Documentation',
-      description: 'Generate comprehensive documentation for functions, classes, and API endpoints',
+      id: 'description',
+      title: 'Generate and Update Description',
+      description: 'Generate a short description based on your current Readme',
       icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-      ),
-      color: 'from-green-500 to-green-600',
-      hoverColor: 'hover:from-green-600 hover:to-green-700'
-    },
-    {
-      id: 'code-quality',
-      title: 'Improve Code Quality',
-      description: 'Add linting, formatting, and code quality improvements',
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
       color: 'from-purple-500 to-purple-600',
       hoverColor: 'hover:from-purple-600 hover:to-purple-700'
-    },
-    {
-      id: 'gitignore',
-      title: 'Add .gitignore',
-      description: 'Generate appropriate .gitignore file for your project type',
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-        </svg>
-      ),
-      color: 'from-orange-500 to-orange-600',
-      hoverColor: 'hover:from-orange-600 hover:to-orange-700'
     },
     {
       id: 'checklist',
@@ -79,18 +59,7 @@ export default function ControlModal({ isOpen, onClose, repo }) {
       color: 'from-indigo-500 to-indigo-600',
       hoverColor: 'hover:from-indigo-600 hover:to-indigo-700'
     },
-    {
-      id: 'contributing',
-      title: 'Add Contributing Guide',
-      description: 'Create guidelines for contributors and development workflow',
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-      ),
-      color: 'from-pink-500 to-pink-600',
-      hoverColor: 'hover:from-pink-600 hover:to-pink-700'
-    }
+
   ];
 
   const handleActionSelect = (actionId) => {
@@ -113,9 +82,16 @@ export default function ControlModal({ isOpen, onClose, repo }) {
     if (!selectedAction) return;
 
     setIsProcessing(true);
-    
+
     try {
-      if (selectedAction === 'checklist') {
+      if(selectedAction == 'description' ){
+        const response = await fetch(`/api/github/repos/${repo.name}/description?token=${token}&owner=${repo.owner.login}`)
+        const data = await response.json()
+        setDescription(data.description)
+        setShowDescriptionPreview(true)
+      }
+      else if (selectedAction === 'checklist') {
+        console.log(repo)
         // Call the checklist generation API
         const response = await fetch('/api/checklist', {
           method: 'POST',
@@ -128,11 +104,11 @@ export default function ControlModal({ isOpen, onClose, repo }) {
             owner: repo.owner.login
           })
         });
-
         const data = await response.json();
         console.log('Generated checklist:', data);
         
         // Store the checklist data and show the modal
+        
         setChecklistData(data);
         setShowChecklistModal(true);
       } else if (selectedAction === 'readme') {
@@ -165,6 +141,26 @@ export default function ControlModal({ isOpen, onClose, repo }) {
     setError(null);
     onClose();
   };
+
+  const handleAcceptDescription = async () => {
+    const resp = await fetch(`/api/github/repos/${repo.name}/description?token=${token}&owner=${repo.owner.login}`,
+      {
+        method: "PUT",
+        body: JSON.stringify({
+          description: description,
+        }),
+      }
+
+    )
+    if(resp.ok){
+      alert("Description Updated ")
+    }
+    else{
+      alert("Description NOT Updated ")
+    }
+    setShowDescriptionPreview(false);
+    onClose();
+  }
 
   const handleAcceptReadme = async () => {
 
@@ -318,6 +314,12 @@ export default function ControlModal({ isOpen, onClose, repo }) {
         onDecline={handleDeclineReadme}
         onRegenerate={handleRegenerateReadme}
         regenerating={regenerating}
+      />
+      <DescriptionModal
+        isOpen={showDescriptionPreview}
+        onClose={() => setShowDescriptionPreview(false)}
+        content={description}
+        onAccept={handleAcceptDescription}
       />
     </div>
   );

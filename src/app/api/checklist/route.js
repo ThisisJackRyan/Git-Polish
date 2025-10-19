@@ -11,21 +11,11 @@ export async function POST(request) {
       );
     }
 
-    // Get the Firebase function URL
-    const firebaseFunctionUrl = process.env.FIREBASE_FUNCTION_URL || 'https://us-central1-git-polish.cloudfunctions.net';
-    const checklistUrl = `${firebaseFunctionUrl}/generateChecklist`;
-
     // Call the Firebase function
-    const response = await fetch(checklistUrl, {
+    const response = await fetch('https://us-central1-gitpolish.cloudfunctions.net/generateChecklist', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        githubtoken,
-        repo,
-        owner
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ githubtoken: githubtoken, repo: repo, owner: owner })
     });
 
     if (!response.ok) {
