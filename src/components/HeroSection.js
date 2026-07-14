@@ -39,9 +39,14 @@ export default function HeroSection() {
               </div>
             </a>
             
-            <button className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-xl font-semibold text-lg hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200">
+            <a
+              href="https://www.youtube.com/watch?v=DJIngMURx7E&t=1s"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-xl font-semibold text-lg hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
+            >
               Watch Demo
-            </button>
+            </a>
           </div>
 
           {/* Key Benefits */}

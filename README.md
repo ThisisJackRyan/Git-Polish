@@ -21,6 +21,10 @@
 
 Git-Polish is a full-stack web application and CLI tool that connects to your GitHub account and uses Google Gemini AI to automatically improve your repositories. It analyzes your codebase and generates polished README files, concise repository descriptions, and actionable improvement checklists — all without leaving the browser or your terminal.
 
+### Demo
+
+[![Watch the demo](https://img.youtube.com/vi/DJIngMURx7E/maxresdefault.jpg)](https://www.youtube.com/watch?v=DJIngMURx7E&t=1s)
+
 ---
 
 ## Features
