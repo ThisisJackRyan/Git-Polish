@@ -3,28 +3,26 @@ import {getUpdatedDescriptionBasedOnReadMe, updateDescription} from '@/app/servi
 
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url)
-    const { repo } = params;
+    const { repo } = await params;
     const token = searchParams.get('token')
     const owner = searchParams.get('owner')
     try {
-       
-
         const description =  await getUpdatedDescriptionBasedOnReadMe(token, repo, owner)
 
         return  Response.json({description: description})
     }
-    catch{
+    catch (err) {
+        console.error('Description generation error:', err);
         return Response.json(
-            { error: `Internal server error` },
+            { error: err.message || 'Internal server error' },
             { status: 500 }
         );
     }
 }
 
-export async function PUT(request, contextPromise ) {
+export async function PUT(request, { params }) {
     const { searchParams } = new URL(request.url)
-    const { params } = await contextPromise;
-    const { repo } = params;
+    const { repo } = await params;
     const token = searchParams.get('token')
     const owner = searchParams.get('owner')
 
@@ -35,9 +33,10 @@ export async function PUT(request, contextPromise ) {
 
         return Response.json({description: description})
     }
-    catch{
+    catch (err) {
+        console.error('Description update error:', err);
         return Response.json(
-            { error: `Internal server error` },
+            { error: err.message || 'Internal server error' },
             { status: 500 }
         );
     }

@@ -1,4 +1,5 @@
-import queryGemini from "../api/gemini.js";
+import { getRepoContext } from "../lib/repoAnalysis.js";
+import { generateReadme, generateChecklist, summarizeReadme } from "../lib/ai.js";
 
 export const fetchGithubRepos = async (token, page=null, perPage=null) => {
   if (!token) {
@@ -67,23 +68,11 @@ export const fetchGithubRepos = async (token, page=null, perPage=null) => {
 
 export const generateRepoData = async (token, repo, owner) => {
   try {
-    const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/readmeGen', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ githubtoken: token, repo: repo, owner: owner })
-    });
-
-    if (!res.ok) {
-      // prefer to inspect body on error
-      const text = await res.text();
-      throw new Error(`Request failed (${res.status}): ${text}`);
-    }
-
-    const data = await res.json(); // parse JSON body
-
-    return data;
+    const { repoInfo, files } = await getRepoContext(owner, repo, token);
+    const summary = await generateReadme(files, repoInfo.name);
+    return { summary };
   } catch (err) {
-  console.error('Fetch error:', err);
+    console.error('README generation error:', err);
   }
 }
 
@@ -110,12 +99,10 @@ export const getUpdatedDescriptionBasedOnReadMe = async(token, repo, owner) => {
 
     const data = await res.json(); // parse JSON body
 
-    const prompt = "You are fed a README.md file below. You are to summarize the README in 2 sentences max. This is for the description of a GitHub repository.\n\n";
-  
     // decode base64 README content to string
     const readmetext = Buffer.from(data.content, 'base64').toString('utf8')
 
-    return await queryGemini(prompt + readmetext);
+    return await summarizeReadme(readmetext);
   } catch (error) {
     throw new Error(`Error fetching readme: ${error.message}`);
   }
@@ -123,23 +110,30 @@ export const getUpdatedDescriptionBasedOnReadMe = async(token, repo, owner) => {
 
 export const generateChecklistData = async (token, repo, owner) => {
   try {
-    const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/generateChecklist', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ githubtoken: token, repo: repo, owner: owner })
-    });
+    const { repoInfo, files, structure } = await getRepoContext(owner, repo, token);
+    const checklist = await generateChecklist(files, structure, repoInfo);
 
-    if (!res.ok) {
-      // prefer to inspect body on error
-      const text = await res.text();
-      throw new Error(`Request failed (${res.status}): ${text}`);
-    }
-
-    const data = await res.json(); // parse JSON body
-  
-    return data;
+    return {
+      checklist,
+      repository: {
+        name: repoInfo.name,
+        description: repoInfo.description,
+        language: repoInfo.language,
+        stars: repoInfo.stargazers_count,
+        forks: repoInfo.forks_count,
+      },
+      analysis: {
+        hasReadme: structure.hasReadme,
+        hasLicense: structure.hasLicense,
+        hasTests: structure.hasTests,
+        hasDocs: structure.hasDocs,
+        hasCI: structure.hasCI,
+        languages: Array.from(structure.languages),
+        fileCount: structure.fileCount,
+      },
+    };
   } catch (err) {
-    console.error('Fetch error:', err);
+    console.error('Checklist generation error:', err);
   }
 }
 

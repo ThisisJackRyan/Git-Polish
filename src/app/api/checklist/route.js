@@ -1,4 +1,9 @@
 import { NextResponse } from 'next/server';
+import { getRepoContext } from '@/app/lib/repoAnalysis';
+import { generateChecklist } from '@/app/lib/ai';
+
+// Reading a whole repo + a Claude generation can run long on large repos.
+export const maxDuration = 300;
 
 export async function POST(request) {
   try {
@@ -11,35 +16,38 @@ export async function POST(request) {
       );
     }
 
-    // Call the Firebase function
-    const response = await fetch('https://us-central1-gitpolish.cloudfunctions.net/generateChecklist', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ githubtoken: githubtoken, repo: repo, owner: owner })
+    const { repoInfo, files, structure } = await getRepoContext(owner, repo, githubtoken);
+    const checklist = await generateChecklist(files, structure, repoInfo);
+
+    return NextResponse.json({
+      checklist,
+      repository: {
+        name: repoInfo.name,
+        description: repoInfo.description,
+        language: repoInfo.language,
+        stars: repoInfo.stargazers_count,
+        forks: repoInfo.forks_count,
+      },
+      analysis: {
+        hasReadme: structure.hasReadme,
+        hasLicense: structure.hasLicense,
+        hasTests: structure.hasTests,
+        hasDocs: structure.hasDocs,
+        hasCI: structure.hasCI,
+        languages: Array.from(structure.languages),
+        fileCount: structure.fileCount,
+      },
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Firebase function error:', errorText);
-      return NextResponse.json(
-        { error: `Firebase function failed: ${response.statusText}` },
-        { status: response.status }
-      );
-    }
-
-    const data = await response.json();
-    return NextResponse.json(data);
-
   } catch (error) {
-    console.error('API route error:', error);
+    console.error('Checklist generation error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error.message || 'Internal server error' },
       { status: 500 }
     );
   }
 }
 
-export async function OPTIONS(request) {
+export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {

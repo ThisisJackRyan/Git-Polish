@@ -143,43 +143,51 @@ export default function ControlModal({ isOpen, onClose, repo }) {
   };
 
   const handleAcceptDescription = async () => {
-    const resp = await fetch(`/api/github/repos/${repo.name}/description?token=${token}&owner=${repo.owner.login}`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          description: description,
-        }),
+    try {
+      const resp = await fetch(`/api/github/repos/${repo.name}/description?token=${token}&owner=${repo.owner.login}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            description: description,
+          }),
+        }
+      )
+      const data = await resp.json().catch(() => ({}));
+      if (resp.ok && !data.error) {
+        alert("✅ Description updated on GitHub.");
+        setShowDescriptionPreview(false);
+        onClose();
+      } else {
+        const detail = data.error || resp.statusText || `HTTP ${resp.status}`;
+        alert(`❌ Couldn't update the description.\n\n${detail}`);
       }
-
-    )
-    if(resp.ok){
-      alert("Description Updated ")
+    } catch (e) {
+      alert(`❌ Couldn't update the description.\n\n${e.message}`);
     }
-    else{
-      alert("Description NOT Updated ")
-    }
-    setShowDescriptionPreview(false);
-    onClose();
   }
 
   const handleAcceptReadme = async () => {
-
-    const resp = await fetch(`/api/github/repos/${repo.name}/readme?token=${token}&owner=${repo.owner.login}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        message: "Update ReadMe via Git Polish",
-        content: btoa(readmeContent),
-      }),
-    })
-    if(resp.ok){
-      alert("README Updated ")
+    try {
+      const resp = await fetch(`/api/github/repos/${repo.name}/readme?token=${token}&owner=${repo.owner.login}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          message: "Update ReadMe via Git Polish",
+          content: readmeContent,
+        }),
+      })
+      const data = await resp.json().catch(() => ({}));
+      if (resp.ok && data.success !== false) {
+        alert("✅ README committed to GitHub.");
+        setShowReadmePreview(false);
+        onClose();
+      } else {
+        // Keep the preview open so the user can retry without regenerating.
+        const detail = data.error || resp.statusText || `HTTP ${resp.status}`;
+        alert(`❌ Couldn't save the README to GitHub.\n\n${detail}`);
+      }
+    } catch (e) {
+      alert(`❌ Couldn't save the README to GitHub.\n\n${e.message}`);
     }
-    else{
-      console.log(resp)
-      alert("it did not")
-    }
-    setShowReadmePreview(false);
-    onClose();
   };
 
   const handleDeclineReadme = () => {

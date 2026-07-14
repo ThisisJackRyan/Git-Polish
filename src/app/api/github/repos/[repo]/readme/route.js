@@ -1,3 +1,9 @@
+import { getRepoContext } from '@/app/lib/repoAnalysis';
+import { generateReadme } from '@/app/lib/ai';
+
+// Reading a whole repo + a Claude generation can run long on large repos.
+export const maxDuration = 300;
+
 export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url)
     const { repo } = await params;
@@ -5,39 +11,25 @@ export async function GET(request, { params }) {
     const owner = searchParams.get('owner')
 
     try {
-        const res = await fetch('https://us-central1-gitpolish.cloudfunctions.net/readmeGen', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ githubtoken: token, repo: repo, owner: owner })
-        });
+        const { repoInfo, files } = await getRepoContext(owner, repo, token);
+        const summary = await generateReadme(files, repoInfo.name);
 
-        if (!res.ok) {
-          // prefer to inspect body on error
-          const text = await res.text();
-          throw new Error(`Request failed (${res.status}): ${text}`);
-        }
-
-        const data = await res.json(); // parse JSON body
-        
-        // Return the data as JSON response
-        return Response.json({ 
-          success: true, 
-          summary: data.summary,
-          data: data 
+        return Response.json({
+          success: true,
+          summary,
         });
     } catch (err) {
-        console.error('Fetch error:', err);
-        return Response.json({ 
-          success: false, 
-          error: err.message 
+        console.error('README generation error:', err);
+        return Response.json({
+          success: false,
+          error: err.message
         }, { status: 500 });
     }
 }
 
 
-export async function PUT(request, contextPromise) {
-  const { params } = await contextPromise;
-  const { repo } = params;
+export async function PUT(request, { params }) {
+  const { repo } = await params;
 
   try {
     const { searchParams } = new URL(request.url);
@@ -72,7 +64,10 @@ export async function PUT(request, contextPromise) {
       },
       body: JSON.stringify({
         message: body.message || (sha ? "Update README" : "Create README"),
-        content: body.content, // must be Base64-encoded
+        // Client sends raw markdown; base64-encode here so UTF-8 content
+        // (em-dashes, curly quotes, emoji) survives — btoa() in the browser
+        // throws InvalidCharacterError on any non-Latin1 character.
+        content: Buffer.from(body.content ?? "", "utf8").toString("base64"),
         sha: sha || undefined,
       }),
     });

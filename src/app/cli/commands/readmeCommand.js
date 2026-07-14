@@ -1,5 +1,5 @@
 import ora from 'ora';
-import { regenReadMe } from '../../api/gemini.js';
+import { regenReadMe } from '../../lib/ai.js';
 import { generateRepoData, updateReadme } from '../../services/github.js';
 import { loadToken } from '../tokenManager.js';
 import { promptRepoDetails, promptReadmeDecision, promptRegenerationSuggestions } from '../displayUtils.js';
