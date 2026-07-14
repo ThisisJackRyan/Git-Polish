@@ -123,3 +123,9 @@ git-polish/
 ```
 
 The two Firebase Cloud Functions each independently download the target repository as a ZIP archive via the GitHub API, extract and collect key source files, and submit them to Gemini with a tailored prompt. Results are returned as JSON to the Next.js API routes, which proxy them to the frontend or CLI.
+
+---
+
+## History
+
+Git-Polish originally ran its AI generation on Google Gemini through Firebase Cloud Functions, with API keys stored in Google Cloud Secret Manager. That meant a second deployment to maintain and an extra network hop for every request. The AI logic has since been consolidated directly into the Next.js app using the Vercel AI SDK and AI Gateway, now powered by Claude. Everything runs in one deployment with no separate cloud functions, and authentication is handled automatically on Vercel via OIDC.
