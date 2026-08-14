@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@upstash/redis": "^1.38.2",
     "ai": "^7.0.26",
     "commander": "^14.0.1",
     "dotenv": "^17.2.3",
