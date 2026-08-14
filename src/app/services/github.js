@@ -1,9 +1,32 @@
 import { getRepoContext } from "../lib/repoAnalysis.js";
 import { generateReadme, generateChecklist, summarizeReadme } from "../lib/ai.js";
+import { Redis } from "@upstash/redis";
+import crypto from "crypto";
+
+const redisClient = (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN)
+  ? Redis.fromEnv()
+  : null;
+const CACHE_TTL = Number(process.env.GITHUB_REPOS_CACHE_TTL || 300);
 
 export const fetchGithubRepos = async (token, page=null, perPage=null) => {
   if (!token) {
     throw new Error('GitHub token is required');
+  }
+
+  // Build a cache key derived from the token + pagination
+  const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+  const cacheKey = `ghrepos:${tokenHash}:p${page ?? 'all'}:s${perPage ?? 'all'}`;
+
+  // Try to return cached result if available
+  if (redisClient) {
+    try {
+      const cached = await redisClient.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch (err) {
+      console.warn('Upstash redis GET error:', err.message || err);
+    }
   }
 
   try {
@@ -55,11 +78,22 @@ export const fetchGithubRepos = async (token, page=null, perPage=null) => {
     }));
 
     const totalRepos = allRepos.length
-    const totalPages = Math.ceil(totalRepos / perPage)
-    const hasNextPage = page < totalPages
-    const hasPrevPage = page > 1
+    const totalPages = perPage ? Math.ceil(totalRepos / perPage) : 1
+    const hasNextPage = perPage ? page < totalPages : false
+    const hasPrevPage = perPage ? page > 1 : false
 
-    return { allRepos:repoData, totalRepos:totalRepos, totalPages:totalPages, hasNextPage:hasNextPage, hasPrevPage:hasPrevPage};
+    const result = { allRepos:repoData, totalRepos:totalRepos, totalPages:totalPages, hasNextPage:hasNextPage, hasPrevPage:hasPrevPage };
+
+    // Cache the result (best-effort)
+    if (redisClient) {
+      try {
+        await redisClient.set(cacheKey, JSON.stringify(result), { ex: CACHE_TTL });
+      } catch (err) {
+        console.warn('Upstash redis SET error:', err.message || err);
+      }
+    }
+
+    return result;
 
   } catch (error) {
     throw new Error(`Error fetching repositories: ${error.message}`);
